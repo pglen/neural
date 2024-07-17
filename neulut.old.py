@@ -19,7 +19,7 @@ gl_serial = 0
 # The training material is pushed to an array;
 # The lookup is executed finding the closest match
 
-class NeuLut():
+class neulut():
 
     def __init__(self, inputs, outputs):
 
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     #nn.dump()
 
     for aa in range(len(tin_arr)):
-        nn.fire(tin_arr[aa])
+        nn.fire(tin_arr[aa], 1)
         print(tin_arr[aa], tou_arr[aa], "out",  nn.outputs,
             "%.3f" % nn.strength)
 
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     #nn.dump()
 
     for aa in range(len(tin_oarr)):
-        nn.fire(tin_oarr[aa])
+        nn.fire(tin_oarr[aa], 1)
         print(tin_oarr[aa], tou_oarr[aa], "out",  nn.outputs,
             "%.3f" % nn.strength)
 
