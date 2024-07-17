@@ -9,7 +9,9 @@ import random, stat, math
 import neunet, trans, neuron, lattice
 
 from pgutil import  *
-from mainwin import  *
+#from mainwin import  *
+
+from guilib import mainwin
 
 # ------------------------------------------------------------------------
 # Globals
@@ -164,7 +166,7 @@ if __name__ == '__main__':
     #neumap = ((1,8,8),)
     neu = neunet.neunet(neumap)
     neu.verbose = conf.verbose
-    neu.fire()
+    #neu.fire()
     #neu.dump()
 
     '''lat = lattice.lattice(2, 2)
@@ -269,29 +271,9 @@ if __name__ == '__main__':
     if not conf.gui:
        sys.exit(0)
 
-    mw = MainWin()
-    gtk.main()
+    mw = mainwin.MainWin()
+    mw.run()
+
     sys.exit(0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

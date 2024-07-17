@@ -76,17 +76,18 @@ class neunet():
 
     # Reverse the last poke
     def undo(self):
-        if  self.last_tent != None:
-            self.last_tent.parent.bias = self.last_bias2
-            self.last_tent.weight = self.last_weight
-
-            self.last_tent.bias = self.last_bias
-            self.last_tent.post = self.last_post
-            self.last_tent.multi = self.last_multi
-            self.last_tent.mularr = self.last_mularr[:]
-            self.last_tent = None
-        else:
-            print("duplicate undo")
+        pass
+        #if  self.last_tent != None:
+        #    self.last_tent.parent.bias = self.last_bias2
+        #    self.last_tent.weight = self.last_weight
+        #
+        #    self.last_tent.bias = self.last_bias
+        #    self.last_tent.post = self.last_post
+        #    self.last_tent.multi = self.last_multi
+        #    self.last_tent.mularr = self.last_mularr[:]
+        #    self.last_tent = None
+        #else:
+        #    print("duplicate undo")
 
     # Recalculate whole net
     def fire(self):
@@ -105,7 +106,8 @@ class neunet():
     def _transfer(self, src, targ):
         if verbose:
             print("transfer src", src.curr, "targ", targ.curr)
-        nlen = len(targ.membarr); tlen = len(targ.membarr[0].tentarr)
+        nlen = len(targ.membarr);
+        tlen = 0 #len(targ.membarr[0].tentarr)
         for aa in range(tlen):              # tenticle loop
             for bb in range(nlen):          # neuron loop
                 if pgdebug > 3:
@@ -157,7 +159,7 @@ class neunet():
         #print "xlen", xlen
         for aa in range(xlen):
             if val & xshift != 0:   xx = 1.
-            else:                   xx = 0.
+            else3:                   xx = 0.
             print("bit", aa, ":",  xx, "  xshift ", xshift)
             for bb in range(xlen):
                 inparr.membarr[aa].tentarr[bb].input =  xx
@@ -168,7 +170,7 @@ class neunet():
         #print "setinput", val, type(val)
         inparr = self.levarr[len(self.levarr)-1];
         xlen = len(inparr.membarr)
-        ylen = len(inparr.membarr[0].tentarr)
+        ylen = 1 #len(inparr.membarr[0].tentarr)
         #print xlen, ylen, len(val)
         if not ignore:
             if xlen * ylen != len(val):
@@ -177,7 +179,7 @@ class neunet():
         cnt = 0
         for aa in range(xlen):
             for bb in range(ylen):
-                inparr.membarr[aa].tentarr[bb].input =  val[cnt]
+                #inparr.membarr[aa].tentarr[bb].input =  val[cnt]
                 cnt += 1
 
     # Compare outputs with expected data

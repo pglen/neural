@@ -83,8 +83,9 @@ class neuron():
 
     def randtip(self, net, val):
         #neuutil.randmemb(self.tentarr).randtip(net, self, val)
-        if self.verbose:
-            print("randtip", self.level, self.num, val)
+        #if self.verbose:
+        #    print("randtip", self.level, self.num, val)
+        pass
 
     def show(self):
         return "i:%+.3f w:%+.3f b:%++.3f o:%+.3f" % \
