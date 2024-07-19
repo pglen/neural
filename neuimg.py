@@ -15,15 +15,16 @@ import neulut
 
 verbose = 0
 
+imgdir = "png"
 
 if __name__ == '__main__':
 
     sumx = Image.new("L", (800,600), color=(100) )
 
     cccc = []
-    ccc  = load_font_img("letter_a.png")
-    ccc2 = load_font_img("letter_b.png")
-    ccc3 = load_font_img("letter_c.png")
+    ccc  = load_font_img(os.path.join(imgdir, "letter_a.png"))
+    ccc2 = load_font_img(os.path.join(imgdir,"letter_b.png"))
+    ccc3 = load_font_img(os.path.join(imgdir,"letter_c.png"))
 
     cccc.append(ccc)
     cccc.append(ccc2)
@@ -56,7 +57,7 @@ if __name__ == '__main__':
     #sys.exit()
     #aaa.show()
 
-    bw = load_bw_image("srect_white_abc.png")
+    bw = load_bw_image(os.path.join(imgdir,"srect_white_abc.png"))
     arr3 = bw.getdata()
 
     # All pixels

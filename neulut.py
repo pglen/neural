@@ -91,6 +91,15 @@ class NeuLut():
         else:
             return 0
 
+
+    def fire_one(self, offs, ins, stride):
+
+        #print("fire_one", ins[:12])
+        ss = self._cmp(ins, self.trarr[offs][0], self.trarr[offs][2], stride)
+        self.outputs = self.trarr[offs][1]
+        self.strength = ss
+        return self.trarr[offs][1]
+
     # --------------------------------------------------------------------
     def fire(self, ins, stride):
 
