@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------
 # Neural network test
 
-import random, math, sys
+import random, math, sys, argparse
 
 from neuutil import *
 from pgutil import *
@@ -135,7 +135,7 @@ def testneu(nnn, tin, tout):
         ttt = time.time()
         nnn.fire(tin[aa])
         tttt +=  time.time() - ttt
-        print("in", tin[aa], "out",  nnn.outputs,)
+        print("in", tin[aa][:12], "out",  nnn.outputs,)
 
         #        "exp",  tout[aa],
         #          "err",  "%.3f" % nnn.strength)
@@ -144,26 +144,43 @@ def testneu(nnn, tin, tout):
 VAL  = 0.5
 VAL2 = 0.6
 
-# imitate and gate
+# imitate AND gate
 
-in_arr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
+in_arrt =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
 ou_arr =  (0, 0, 0, VAL)
 
 tin_arr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
 tou_arr =  (0, 0, 0, VAL)
 
-# imitate or gate
+# imitate OR gate
 
-in_oarr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
+in_oarrt =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
 ou_oarr =  (0, VAL, VAL, VAL,)
 
 tin_oarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
 tou_oarr =  (0, VAL, VAL, VAL,)
 
+parser = argparse.ArgumentParser(
+                    prog='neunonp',
+                    description='numpy less neural demo',
+                    epilog='')
+
+parser.add_argument('-c', '--count', default=2, type=int)
 
 if __name__ == '__main__':
 
-    nn = NeuNp(2, 1)
+    args = parser.parse_args()
+    print("count =", args.count)
+
+    in_arr = []
+    for cc in in_arrt:
+        in_comp =  [0 for aa in range(args.count)]
+        in_arr.append(list(cc) + in_comp)
+
+    #print(in_arr)
+    #sys.exit(0)
+
+    nn = NeuNp(len(in_arr), 1)
     print("neunp AND")
 
     for aa in range(len(in_arr)):
@@ -174,10 +191,16 @@ if __name__ == '__main__':
 
     testneu(nn, in_arr, ou_arr)
 
+    #sys.exit(0)
 
     # -----------------------------------------------------------
 
-    nn = NeuNp(2, 1)
+    in_oarr = []
+    for cc in in_oarrt:
+        in_comp =  [0 for aa in range(args.count)]
+        in_oarr.append(list(cc) + in_comp)
+
+    nn = NeuNp(len(in_oarr), 1)
     print("\nneunp OR")
 
     for aa in range(len(in_oarr)):

@@ -1,15 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # ------------------------------------------------------------------------
 # Neural network test
 
-import random, math, sys
+import random, math, sys, argparse
 
 from neuutil import *
 from pgutil import *
 
 import numpy as np
-#from numba import njit
 
 verbose = 0
 
@@ -18,7 +17,7 @@ verbose = 0
 gl_serial = 0
 
 # ------------------------------------------------------------------------
-# The basic building block
+# The basic building block, numpy implementation
 # The training material is pushed to an array;
 # The lookup is executed finding the closest match
 
@@ -30,13 +29,10 @@ class NeuNp():
 
         # These are helpers
         self.serial = gl_serial; gl_serial += 1;
-
         if verbose:
             print("neulut init ",  "inuts %.03f " % inputs) #, end=' ')
 
-        #self.inputs  = []; self.outputs = []
         self.strength = 0
-
         self.inputs  = np.zeros(inputs)
         self.ouputs  = np.zeros(outputs)
         self.trarr = []
@@ -44,7 +40,6 @@ class NeuNp():
     def inlen(self):
         return len(self.inputs)
 
- 
     # --------------------------------------------------------------------
     # Compare arrays, return largest mismatch value
     # Obey step value
@@ -88,11 +83,10 @@ class NeuNp():
     def cmp2(self, ins, val):
          #ret = np.power(np.subtract(ins, val),2)
          ret = np.abs(np.subtract(ins, val))
-         #print("ins", ins, "val", val, "ret", 
+         #print("ins", ins, "val", val, "ret",
          #           ret, "sum", ret.sum())
          sum = ret.sum()
          #print("cmp2", ins, val, sum)
-
          return sum
 
     # --------------------------------------------------------------------
@@ -125,7 +119,7 @@ class NeuNp():
 
     def train(self, ins, outs, step = 1):
         #print(ins, outs)
-        self.trarr.append((ins, outs, step))
+        self.trarr.append((np.array(ins), outs, step))
 
 
 def testneu(nnn, tin, tout):
@@ -134,7 +128,7 @@ def testneu(nnn, tin, tout):
         ttt = time.time()
         nnn.fire(aa)
         tttt +=  time.time() - ttt
-        print("in", aa, "out",  nnn.outputs,)
+        print("in", aa[:12], "out",  nnn.outputs,)
 
         #        "exp",  tout[aa],
         #          "err",  "%.3f" % nnn.strength)
@@ -143,55 +137,71 @@ def testneu(nnn, tin, tout):
 VAL  = 0.5
 VAL2 = 0.6
 
-arr_0 =  np.array ((0,0))
-arr_1 =  np.array ((0,VAL))
-arr_2 =  np.array ((VAL,0))
-arr_3 =  np.array ((VAL,VAL))
+#arr_0 =  np.array ((0,0))
+#arr_1 =  np.array ((0,VAL))
+#arr_2 =  np.array ((VAL,0))
+#arr_3 =  np.array ((VAL,VAL))
 
-# imitate and gate
+arr_0 =  (0,0)
+arr_1 =  (0,VAL)
+arr_2 =  (VAL,0)
+arr_3 =  (VAL,VAL)
 
-in_arr =  (arr_0, arr_1,  arr_2,  arr_3, )
+# imitate the AND gate
+in_arrt =  (arr_0, arr_1,  arr_2,  arr_3,)
 ou_arr =  (0, 0, 0, 1)
-
-tin_arr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
+tin_arrt =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
 tou_arr =  (0, 0, 0, VAL)
 
-def andgate():
-    pass
-
-# imitate or gate
-
-in_oarr =  (arr_0, arr_1,  arr_2,  arr_3, )
+# imitate the OR gate
+in_oarrt =  (arr_0, arr_1,  arr_2,  arr_3, )
 ou_oarr =  (0, 1, 1, 1,)
-
 tin_oarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
 tou_oarr =  (0, VAL, VAL, VAL,)
 
+parser = argparse.ArgumentParser(
+                    prog='neunonp',
+                    description='numpy less neural demo',
+                    epilog='')
+parser.add_argument('-c', '--count', default=2, type=int)
 
 if __name__ == '__main__':
 
-    nn = NeuNp(2, 1)
-    print("neunp AND")
+    args = parser.parse_args()
+    #print("count =", args.count)
+    in_arr = []
+    for cnt, cc in enumerate(in_arrt):
+        in_comp =  [0.0 for aa in range(args.count)]
+        dd = list(cc) + in_comp
+        in_arr.append(dd)
 
+    tin_arr = []
+    for cnt, cc in enumerate(tin_arrt):
+        in_comp =  [0.0 for aa in range(args.count)]
+        dd = list(cc) + in_comp
+        tin_arr.append(dd)
+
+    #print(type(in_arr), in_arr)
+    #sys.exit(0)
+
+    print("NeuNp AND:")
+    nn = NeuNp(len(in_arr), 1)
     for aa in range(len(in_arr)):
         nn.train(in_arr[aa], ou_arr[aa])
 
-    #print(nn)
-    #nn.dump()
-
-    testneu(nn, in_arr, ou_arr)
+    testneu(nn, tin_arr, tou_arr)
     #sys.exit(0)
 
     # -----------------------------------------------------------
+    in_oarr = []
+    for cc in in_oarrt:
+        in_comp =  [0 for aa in range(args.count)]
+        in_oarr.append(list(cc) + in_comp)
 
-    nn2 = NeuNp(2, 1)
-    print("\nneunp OR")
-
+    nn2 = NeuNp(len(in_oarr), 1)
+    print("NeuNp OR:")
     for aa in range(len(in_oarr)):
         nn2.train(in_oarr[aa], ou_oarr[aa])
-
-    #print(nn)
-    #nn.dump()
 
     testneu(nn2, in_oarr, ou_oarr)
 
