@@ -144,22 +144,6 @@ def testneu(nnn, tin, tout):
 VAL  = 0.5
 VAL2 = 0.6
 
-# imitate AND gate
-
-in_arrt =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
-ou_arr =  (0, 0, 0, VAL)
-
-tin_arr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
-tou_arr =  (0, 0, 0, VAL)
-
-# imitate OR gate
-
-in_oarrt =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
-ou_oarr =  (0, VAL, VAL, VAL,)
-
-tin_oarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
-tou_oarr =  (0, VAL, VAL, VAL,)
-
 parser = argparse.ArgumentParser(
                     prog='neunonp',
                     description='numpy less neural demo',
@@ -167,13 +151,11 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-c', '--count', default=2, type=int)
 
-if __name__ == '__main__':
 
-    args = parser.parse_args()
-    print("count =", args.count)
+def test_one(in_arrx, ou_arrx):
 
     in_arr = []
-    for cc in in_arrt:
+    for cc in in_arrx:
         in_comp =  [0 for aa in range(args.count)]
         in_arr.append(list(cc) + in_comp)
 
@@ -184,31 +166,39 @@ if __name__ == '__main__':
     print("neunp AND")
 
     for aa in range(len(in_arr)):
-        nn.train(in_arr[aa], ou_arr[aa])
+        nn.train(in_arr[aa], ou_arrx[aa])
 
     #print(nn)
     #nn.dump()
 
     testneu(nn, in_arr, ou_arr)
 
+
+if __name__ == '__main__':
+
+    args = parser.parse_args()
+    #print("count =", args.count)
+
+    # -----------------------------------------------------------
+    # imitate AND gate
+
+    in_arrt =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
+    ou_arr =  (0, 0, 0, VAL)
+
+    tin_arr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
+    tou_arr =  (0, 0, 0, VAL)
+    test_one(in_arrt, ou_arr)
+
     #sys.exit(0)
 
     # -----------------------------------------------------------
+    # imitate OR gate
 
-    in_oarr = []
-    for cc in in_oarrt:
-        in_comp =  [0 for aa in range(args.count)]
-        in_oarr.append(list(cc) + in_comp)
+    in_oarrt =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
+    ou_oarr =  (0, VAL, VAL, VAL,)
 
-    nn = NeuNp(len(in_oarr), 1)
-    print("\nneunp OR")
-
-    for aa in range(len(in_oarr)):
-        nn.train(in_oarr[aa], ou_oarr[aa])
-
-    #print(nn)
-    #nn.dump()
-
-    testneu(nn, in_oarr, ou_oarr)
+    tin_oarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
+    tou_oarr =  (0, VAL, VAL, VAL,)
+    test_one(in_oarrt, ou_oarr)
 
 # EOF

@@ -39,6 +39,12 @@ def parr(arr):
 
     print()
 
+def is_ok(val, ref):
+    if val == ref:
+        ret = "\033[32;1mOK\033[0m"
+    else:
+        ret = "\033[31;1mERR\033[0m"
+    return ret
 
 def newarr(size, fill):
     arrx = []
