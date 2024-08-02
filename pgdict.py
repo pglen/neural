@@ -2,23 +2,6 @@
 
 import sys, random
 
-class EasyDict(dict):
-    def __getitem__(self, key):
-        if isinstance(key, tuple):
-            return [super().__getitem__(k) for k in key]
-        else:
-            return super().__getitem__(key)
-    def __setitem__(self, key, value):
-        if isinstance(key, tuple):
-            self.update(zip(key, value))
-        else:
-            super().__setitem__(key, value)
-    def __delitem__(self, key, value):
-        if isinstance(key, tuple):
-            for k in key: super().__delitem__(k)
-        else:
-            super().__setitem__(key, value)
-
 class DeepDict(dict):
 
     ''' Automatically create new dimentions '''
@@ -41,18 +24,18 @@ class DeepDict(dict):
             hist = hist[aa]
 
     def getdim(self, dim):
-        hist = self
-        try:
-            for aa in dim:
-                hist = hist[aa]
-            #print("dim", hist)
-            #for bb in hist:
-            #    print(bb)
-        except:
-            pass
-            print("getdim:", sys.exc_info())
-            raise
 
+        ''' Get value for dimention '''
+
+        hist = self
+        for aa in dim:
+            # Generate exception if not in dict
+            if isinstance(hist[aa], dict):
+                pass
+            hist = hist[aa]
+
+        #for bb in hist:
+        #    print(bb)
         return hist
 
     def recurse(self, idx = [], callb = None):
@@ -75,26 +58,35 @@ class DeepDict(dict):
                 if callb:
                     callb(idx2, nnn[aaaa])
 
-        #def __getitem__(self, key):
-        #    #print("getitem key =", key)
-        #    if key not in self:
-        #        super().setdefault(key, {})
-        #    ret = super().__getitem__(key)
-        #    return ret
-        #def __setitem__(self, key, value):
-        #    #print("setitem", key, value, type(value))
-        #    try:
-        #        super().__getitem__(key)
-        #    except:
-        #        pgutil.print_exception("set -> get")
-        #        #print("set", sys.exc_info())
-        #        #super().__setitem__(key, value)
-        #        super().__setitem__(key, {})
-        #def __delitem__(self, key, value):
-        #    if isinstance(key, tuple):
-        #        for k in key: super().__delitem__(k)
-        #    else:
-        #        super().__setitem__(key, value)
+    def __getitem__(self, key):
+        #print("getitem key =", key)
+        if isinstance(key, tuple):
+            ret = self.getdim(key)
+        else:
+            if key not in self:
+                super().setdefault(key, {})
+            ret = super().__getitem__(key)
+        return ret
+
+    def __setitem__(self, key, value):
+        #print("setitem", key, type(key), value, type(value))
+        if isinstance(key, tuple):
+            #print("tuple", key)
+            self.setdeep(key, value)
+        else:
+            try:
+                super().__getitem__(key)
+            except:
+                pgutil.print_exception("set -> get")
+                #print("set", sys.exc_info())
+                #super().__setitem__(key, value)
+                super().__setitem__(key, {})
+
+    #def __delitem__(self, key, value):
+    #    if isinstance(key, tuple):
+    #        for k in key: super().__delitem__(k)
+    #    else:
+    #        super().__setitem__(key, value)
 
 def callit(idx, val):
     print("callb:", idx, val)
@@ -102,17 +94,29 @@ def callit(idx, val):
 if __name__ == '__main__':
 
     import  pgutil
+
+    ddd = DeepDict()
+    ddd[1,2,3] = 88
+    ddd[1,2,4] = 99
+    print("ddd =", ddd)
+    print("ddd[1,2] =", ddd[1,2])
+    print("ddd[1,2,3] =", ddd[1,2,4])
+
     ttt = DeepDict()
     ttt.setdeep((1, 2, 3, 4), 'a')
     ttt.setdeep((1, 2, 3, 5), 'b')
+    # This sould raise exception
     #ttt.setdeep((1, 2, 3), 'c')
     ttt.setdeep((1, 2, 6), 'd')
     print("ttt =", ttt)
     ttt.recurse(callb=callit)
 
-    print("getdim:", ttt.getdim((1,2 )))
-    #nn = DeepDict()
-    #nn.setdeep((1,), 'b')
-    #print(nn)
+    print("getdim[1.2]:", ttt.getdim((1,2 )))
+    print("getdim[1,2,3]:", ttt.getdim((1,2,3 )))
+    print("getdim[1,2,3,4]:", ttt.getdim((1,2,3,4 )))
+
+    nn = DeepDict()
+    nn.setdeep((0,), 'b')
+    print("nn =", nn)
 
 # EOF
