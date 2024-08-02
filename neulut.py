@@ -123,8 +123,8 @@ class NeuLut():
                     str(self.outputs)[:20]
 
     def dump(self):
-        for aa in enumerate(self.trarr):
-           print("tr:", aa[1], "\t  rs:", self.resarr[aa[0]])
+        for cnt, aa in enumerate(self.trarr):
+           print("trn: %3d" % cnt, "res:", self.resarr[cnt], aa[:12], "...")
 
     def train(self, ins, outs, step = 1):
         #print(ins, outs)
@@ -134,21 +134,6 @@ class NeuLut():
     def showtrain(self):
         for aa in self.trarr:
             print(aa)
-
-def is_ok(val, ref):
-    if val == ref:
-        print("\033[32;1mOK\033[0m", end = " ")
-    else:
-        print("\033[31;1mERR\033[0m", end = " ")
-
-# Decorator for speed measure
-def measure(func):
-    def run(*args, **kwargs):
-        ttt = time.time()
-        ret = func(*args, **kwargs)
-        print("Exe: %.3f us" % ((time.time() - ttt) * 1000000))
-        return ret
-    return run
 
 #@measure
 def testx(kind, in_arr, out_arr, tin_arr, tout_arr):
@@ -166,7 +151,7 @@ def testx(kind, in_arr, out_arr, tin_arr, tout_arr):
         nn.fire(tin_arr[aa], 1)
         print(kind, "in:", tin_arr[aa], "out:",
                 nn.outputs, "expect:", tout_arr[aa], end = " ")
-        is_ok(nn.outputs,  tout_arr[aa])
+        print(is_ok(nn.outputs,  tout_arr[aa]), end = "")
         print()
 
 ''' The generalzation comes from the lattitude of the compare. For

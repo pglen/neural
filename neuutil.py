@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import sys, random
+import sys, random, time
+
 from PIL import Image
 
 from collections import defaultdict
@@ -259,6 +260,15 @@ def _sectiony(arry, xx, currx, ret, bww, ppp):
             curry += 1
             #break
         progy += 1
+
+# Decorator for speed measure
+def measure(func):
+    def run(*args, **kwargs):
+        ttt = time.time()
+        ret = func(*args, **kwargs)
+        print("Exe: %.3f us" % ((time.time() - ttt) * 1000000))
+        return ret
+    return run
 
 # EOF
 

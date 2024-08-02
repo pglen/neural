@@ -13,31 +13,34 @@ from neuutil import *
 from neulut import *
 
 verbose = 0
-letters = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ " \
-            "1234567890 `~!@#$%^&*()_+{}:\"|<>?[];\'\\,./ "
-
-space = list(" ")
-#letters =  [ chr(nn) for nn in range(32) ]  + space
-#letters += [ chr(nn) for nn in range(32, 64) ] + space
-#letters += [ chr(nn) for nn in range(64, 96) ] + space
-#letters += [ chr(nn) for nn in range(96, 128) ] + space
-
 letters = [ chr(nn) for nn in range(128) ]
-print(letters)
-
-#sys.exit()
+#print(letters)
 
 if __name__ == '__main__':
-    print("IMG fonts")
+    print("Train fonts")
+
+    nlut = NeuLut(200, 8)
 
     sumx = Image.new("L", (500,300), color=(150) )
 
-    # use a bitmap font
     #font = ImageFont.load_default()
-    #font = ImageFont.truetype(font="") # needs filename
     font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 20)
     #font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
     #font = ImageFont.truetype("/usr/share/fonts/truetype/noto/NotoSansDisplay-Regular.ttf", 20)
+
+    # Flatten font to linear
+    letters = "abcdefgh"
+    for aa in letters:
+        sss = font.getsize(aa)
+        fff = Image.new("L", sss, color=(255) )
+        draw = ImageDraw.Draw(fff)
+        draw.text((0, 0), aa, font=font)
+        ddd = list(fff.getdata())
+        #print(aa, len(ddd), sss, ddd)
+        nlut.train(ddd, aa)
+
+    nlut.dump()
+    sys.exit()
 
     row = 10
     mx = 0; my = 0
@@ -70,3 +73,4 @@ if __name__ == '__main__':
     sumx2.show()
 
 
+# EOF

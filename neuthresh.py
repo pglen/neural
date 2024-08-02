@@ -25,6 +25,7 @@ if __name__ == '__main__':
 
     bw = load_bw_image(os.path.join(imgdir, "srect_white_abc.png"))
     pp = Image.new(bw.mode, bw.size, color=255)
+    dd = Image.new(bw.mode, bw.size, color=255)
     sumx = Image.new(bw.mode, (300, 200), color=240)
 
     arr = []
@@ -56,29 +57,38 @@ if __name__ == '__main__':
     #print(thh2)
 
     # Plot
-    plotvals(arr, plt, "Org")
+    ''' plotvals(arr, plt, "Org")
     plotvals(lll, plt, "LowPass")
     plotflags(thh, thh, plt, -100, '1')
     plt.xlabel("X Step"); plt.ylabel("Y Sums")
     plt.legend()
-    #plt.show()
-    #sys.exit(0)
+    plt.show()
+    sys.exit(0)
+    '''
 
     # Output it
     ret = sections(thh, thh2, bw, pp)
     cntx = 0
     def callme(keys, val):
         global cntx
-        print(keys, val,  end = "  ")
-        if cntx % 4 == 3:
-            print()
-        cntx += 1
+        if keys[0] == 0 and keys[1] == 0:
+            dd.putpixel((keys[2], keys[3]), val)
+            print("%s %3d" % (keys, val),  end = "  ")
+            if cntx % 3 == 2:
+                print()
+            cntx += 1
+
     ret.recurse(callb = callme)
     print()
 
     sumx.paste(bw)
-    sumx.paste(pp, (0, bw.size[1] + 5))
+    sumx.paste(pp, (0, (bw.size[1] + 5) * 1))
+    #sumx.paste(pp, ((bw.size[0] + 5), (bw.size[1] + 5) * 1))
+    sumx.paste(dd, (0, (bw.size[1] + 5) * 2))
+    #sumx.paste(dd, ((bw.size[0] + 5), (bw.size[1] + 5) * 2))
+
     sumx2 = sumx.resize((sumx.size[0] * 3, sumx.size[1] * 3))
     sumx2.show()
 
 # EOF
+
