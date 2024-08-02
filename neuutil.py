@@ -199,7 +199,7 @@ def plotflags(fallx, arrx, plotx, nulval = 0, lab = ""):
             xxx.append(ccc); yyy.append(flag)
     plotx.scatter(xxx, yyy, label=lab)
 
-from mydict import *
+from pgdict import *
 
 def sections(thh1x, thh2x, bww, ppp):
 
@@ -220,17 +220,27 @@ def sections(thh1x, thh2x, bww, ppp):
                     break
                 # one X section
                 bww.putpixel((prog, 0), 200)
-                print(prog, end = " ")
+                #print(prog, end = " ")
                 _sectiony(thh1x, prog, curr, ret, bww, ppp)
                 prog += 1
             curr += 1
             #break
         prog += 1
-    print(ret)
+    #for aa in ret:
+    #    for bb in ret[aa]:
+    #        #print(aa, bb)
+    #        for cc in ret[aa][bb]:
+    #            #print(aa, bb, cc) #ret[aa][bb][cc])
+    #            for dd in ret[aa][bb][cc]:
+    #                print("[%d, %d, %d, %d] %d" % (aa,bb,cc,dd, ret[aa][bb][cc][dd]) )
+    #def callme(keys, val):
+    #    print(keys, val)
+    #ret.recurse(callb = callme)
+    #print(ret)
+    return ret
 
 def _sectiony(arry, xx, currx, ret, bww, ppp):
     progy = 0; leny = len(arry);  curry = 0;
-
     while True:
         if progy >= leny:
             break
@@ -238,23 +248,17 @@ def _sectiony(arry, xx, currx, ret, bww, ppp):
             while(True):
                 if not arry[progy]:
                     break
-
                 #bww.putpixel((0, progy),  200)
                 col = bww.getpixel((xx, progy))
                 ppp.putpixel((xx, progy), 200 - col)
-                ret[currx][curry][xx][progy] = col
-                #ret[currx,curry,xx,progy] = (0,0,0,0,col)
+                ret.setdeep((currx,curry,xx,progy), col)
+                #ret[currx,curry,xx,progy] = col
+                #print(currx,curry,xx,progy, col)
                 progy += 1
-
             #print("[", xx, prog, end = " ] " )
             curry += 1
             #break
         progy += 1
-    print(ret)
-    #for aa in ret:
-    #    print(aa)
-
-    return ret
 
 # EOF
 

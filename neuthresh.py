@@ -15,11 +15,11 @@ import matplotlib.pyplot as plt
 
 from neuutil import *
 from pgutil import *
+from pgdict import *
 import neulut
 
 LOWPASS = 0
 imgdir = "png"
-
 
 if __name__ == '__main__':
 
@@ -65,7 +65,16 @@ if __name__ == '__main__':
     #sys.exit(0)
 
     # Output it
-    sections(thh, thh2, bw, pp)
+    ret = sections(thh, thh2, bw, pp)
+    cntx = 0
+    def callme(keys, val):
+        global cntx
+        print(keys, val,  end = "  ")
+        if cntx % 4 == 3:
+            print()
+        cntx += 1
+    ret.recurse(callb = callme)
+    print()
 
     sumx.paste(bw)
     sumx.paste(pp, (0, bw.size[1] + 5))
