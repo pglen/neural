@@ -115,6 +115,8 @@ if __name__ == '__main__':
     print("getdim[1,2,3]:", ttt.getdim((1,2,3 )))
     print("getdim[1,2,3,4]:", ttt.getdim((1,2,3,4 )))
 
+    assert 1 == 1
+
     nn = DeepDict()
     nn.setdeep((0,), 'b')
     print("nn =", nn)
