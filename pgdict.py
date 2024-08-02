@@ -91,13 +91,18 @@ class DeepDict(dict):
 def callit(idx, val):
     print("callb:", idx, val)
 
+def test_create():
+    print("test-create")
+    ddd = DeepDict()
+    ddd[1,2,3] = 88
+    ddd[1,2,4] = 99
+
+    assert ddd[1,2,4] == 99
+
 if __name__ == '__main__':
 
     import  pgutil
 
-    ddd = DeepDict()
-    ddd[1,2,3] = 88
-    ddd[1,2,4] = 99
     print("ddd =", ddd)
     print("ddd[1,2] =", ddd[1,2])
     print("ddd[1,2,3] =", ddd[1,2,4])
@@ -114,8 +119,6 @@ if __name__ == '__main__':
     print("getdim[1.2]:", ttt.getdim((1,2 )))
     print("getdim[1,2,3]:", ttt.getdim((1,2,3 )))
     print("getdim[1,2,3,4]:", ttt.getdim((1,2,3,4 )))
-
-    assert 1 == 1
 
     nn = DeepDict()
     nn.setdeep((0,), 'b')
