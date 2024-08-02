@@ -4,7 +4,7 @@
 # Mark boundary of letters
 
 '''
-    Evaluate letter centers.
+    Evaluate filled centers.
 
 '''
 
@@ -17,29 +17,15 @@ from neuutil import *
 from pgutil import *
 import neulut
 
-LOWPASS = 2
-
-
-def plotvals(arrx, plotx, lab = ""):
-    xx = []; yy = []
-    for cnt, aa in enumerate(arrx):
-        xx.append(cnt); yy.append(aa)
-    plotx.plot(xx, yy, label=lab)
-
-def plotflags(fallx, arrx, nulval):
-
-    xxx = []; yyy = []
-    for ccc in range(len(arrx)):
-        if fallx[ccc]:
-            flag = arrx[ccc]
-            xxx.append(ccc); yyy.append(flag)
-    return xxx, yyy
+LOWPASS = 0
 
 imgdir = "png"
 
 if __name__ == '__main__':
 
     bw = load_bw_image(os.path.join(imgdir, "srect_white_abc.png"))
+    pp = Image.new(bw.mode, bw.size, color=255)
+    sumx = Image.new(bw.mode, (300, 200), color=240)
 
     arr = []
     for aa in range(0, bw.size[1], 1):
@@ -50,7 +36,17 @@ if __name__ == '__main__':
         arr.append(sss)
     lll = lowpass(arr, LOWPASS)
     falls = falledges(lll)
-    raised = raisededges(lll)
+    hraised = raisededges(lll)
+
+    # Plot
+    plotvals(arr, plt, "Org")
+    plotvals(lll, plt, "LowPass")
+    plotflags(hraised, lll, plt, -100, 'Rise')
+    plotflags(falls, lll, plt, -200, 'Fall')
+    plt.xlabel("X Values"); plt.ylabel("Y Sums")
+    plt.legend()
+    #plt.show()
+    #sys.exit(0)
 
     arr2 = []
     for xx in range(0, bw.size[0], 1):
@@ -61,32 +57,40 @@ if __name__ == '__main__':
         arr2.append(ssss)
     lll2 = lowpass(arr2, LOWPASS)
     falls2 = falledges(lll2)
-    raised2 = raisededges(lll2)
+    vraised = raisededges(lll2)
 
-    # Plot
-    plotvals(arr, plt, "Org")
-    plotvals(lll, plt, "LowPass")
-
-    plt.scatter(*plotflags(raised, lll, -400), label='Rise')
-    plt.scatter(*plotflags(falls, lll, -200), label='Fall')
-    plt.xlabel("X Values"); plt.ylabel("Y Sums")
-    plt.legend()
-
-    plt.show()
-    sys.exit(0)
-
-    for cnt, cc in enumerate(raised):
+    crosses = []
+    for cnt, cc in enumerate(hraised):
         if cc:
             for bbb in range(0, bw.size[0], 1):
-                #print(pxx, end = " ")
-                bw.putpixel((bbb, cnt), 100)
+                # if vertical contains this point, it is a crossing
+                if vraised[bbb]:
+                    crosses.append((bbb, cnt))
 
-    for cnt, cc in enumerate(raised2):
-        if cc:
-            for bbb in range(0, bw.size[1], 1):
-                #print(pxx, end = " ")
-                bw.putpixel((cnt, bbb), 100)
+    #for cnt, cc in enumerate(falls):
+    #    if cc:
+    #        for bbb in range(0, bw.size[0], 1):
+    #            #print(pxx, end = " ")
+    #            bw.putpixel((bbb, cnt), 200)
 
-    bw.show()
+    #for cnt, cc in enumerate(vraised):
+    #    if cc:
+    #        for bbb in range(0, bw.size[1], 1):
+    #            #print(pxx, end = " ")
+    #            bw.putpixel((cnt, bbb), 100)
+
+    # Output it
+    for cnt, cc in enumerate(crosses):
+        pp.putpixel(cc, 100)
+
+    for cnt, cc in enumerate(crosses):
+        bw.putpixel(cc, 100)
+        #bw.putpixel((cc[0], cc[1] + 1), 100)
+        #bw.putpixel((cc[0], cc[1] - 1), 0)
+
+    sumx.paste(bw)
+    sumx.paste(pp, (0, bw.size[1] + 5))
+    sumx2 = sumx.resize((sumx.size[0] * 3, sumx.size[1] * 3))
+    sumx2.show()
 
 # EOF

@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
-import random
+import sys, random
 from PIL import Image
+
+from collections import defaultdict
+recursivedict = lambda: defaultdict(recursivedict)
 
 def pn(num):
     return "% -7.3f" % num
@@ -103,7 +106,6 @@ def load_font_img(fname):
     #print(fname, eee-mmm, "x", len(arr2))
     #print("new", "L", eee-mmm, len(arr2), "data len", len(arr))
 
-
     ccc = Image.new("L", (eee-mmm, len(arr2)))
     ccc.putdata(arr)
     #ccc.show()
@@ -139,13 +141,12 @@ def lowpass(arrx, factorx = 1):
 
     ''' low pass filter '''
 
-    lenx = len(arrx)
-    lll = [0 for _ in range(lenx) ]
-    # first and last unchanged
-    lll[0] = arrx[lenx-1]; lll[lenx-1] = arrx[0]
-    for aa in range(factorx):
+    lll = arrx[:]
+    lenx = len(lll)
+    for _ in range(factorx):
+        # first and last unchanged
         for ddd in range(1, lenx-2):
-            avg = arrx[ddd-1] + arrx[ddd] + arrx[ddd+1]
+            avg = lll[ddd-1] + lll[ddd] + lll[ddd+1]
             lll[ddd] = avg // 3
     return lll
 
@@ -183,4 +184,77 @@ def raisededges(arrx):
         prev = arrx[ddd]
     return eee
 
+def plotvals(arrx, plotx, lab = ""):
+    xx = []; yy = []
+    for cnt, aa in enumerate(arrx):
+        xx.append(cnt); yy.append(aa)
+    plotx.plot(xx, yy, label=lab)
+
+def plotflags(fallx, arrx, plotx, nulval = 0, lab = ""):
+
+    xxx = []; yyy = []
+    for ccc in range(len(arrx)):
+        if fallx[ccc]:
+            flag = arrx[ccc]
+            xxx.append(ccc); yyy.append(flag)
+    plotx.scatter(xxx, yyy, label=lab)
+
+from mydict import *
+
+def sections(thh1x, thh2x, bww, ppp):
+
+    ''' Boundary by non zero sectons '''
+
+    ret = DeepDict()
+
+    prog = 0; xlen = len(thh2x); curr = 0
+    while True:
+        if prog >=  xlen:
+            break
+        if thh2x[prog]:
+            while True:
+                if prog >=  xlen:
+                    break
+                if  not thh2x[prog]:
+                    #print()
+                    break
+                # one X section
+                bww.putpixel((prog, 0), 200)
+                print(prog, end = " ")
+                _sectiony(thh1x, prog, curr, ret, bww, ppp)
+                prog += 1
+            curr += 1
+            #break
+        prog += 1
+    print(ret)
+
+def _sectiony(arry, xx, currx, ret, bww, ppp):
+    progy = 0; leny = len(arry);  curry = 0;
+
+    while True:
+        if progy >= leny:
+            break
+        if arry[progy]:
+            while(True):
+                if not arry[progy]:
+                    break
+
+                #bww.putpixel((0, progy),  200)
+                col = bww.getpixel((xx, progy))
+                ppp.putpixel((xx, progy), 200 - col)
+                ret[currx][curry][xx][progy] = col
+                #ret[currx,curry,xx,progy] = (0,0,0,0,col)
+                progy += 1
+
+            #print("[", xx, prog, end = " ] " )
+            curry += 1
+            #break
+        progy += 1
+    print(ret)
+    #for aa in ret:
+    #    print(aa)
+
+    return ret
+
 # EOF
+
