@@ -77,53 +77,55 @@ class NeuNp():
                     str(self.outputs)[:20] + " ..."
 
     def dump(self):
-        for aa in self.trarr:
-           print(aa)
+        for cnt, aa in enumerate(self.trarr):
+            #print(aa[0][:16])
+            arr2 = rle(aa[0])
+            print("%-2d" % cnt, aa[1], arr2[:8], " ...")
 
     def train(self, ins, outs, step = 1):
         #print(ins, outs)
         self.trarr.append((np.array(ins), outs, step))
 
-def testneu(nnn, tin, tout):
-    tttt = 0
-    for cnt, aa in enumerate(tin):
-        ttt = time.time()
-        nnn.fire(aa)
-        tttt +=  time.time() - ttt
-        print("in", aa[:12], "out",  nnn.outputs, is_ok(nnn.outputs, tout[cnt]))
-    print("%.3f ms" % (tttt * 1000) )
-
-VAL  = 0.5
-VAL2 = 0.6
-
-arr_0 =  (0,0)
-arr_1 =  (0,VAL)
-arr_2 =  (VAL,0)
-arr_3 =  (VAL,VAL)
-
-def test_train_check(in_arrx, ou_arrx,  tin_arrx, tou_arrx):
-
-    in_arr = []; tin_arr = []
-    for cnt, cc in enumerate(in_arrx):
-        in_comp =  [0 for aa in range(args.count)]
-        in_arr.append(list(cc) + in_comp)
-        tin_arr.append(list(tin_arrx[cnt]) + in_comp)
-    #print(in_arr)
-    nn = NeuNp(len(in_arr), 1)
-    for aa in range(len(in_arr)):
-        nn.train(in_arr[aa], ou_arrx[aa])
-    testneu(nn, tin_arr, tou_arrx)
-
-
-parser = argparse.ArgumentParser(
-                    prog='neunp',
-                    description='neural demo',
-                    epilog='')
-parser.add_argument('-c', '--count', default=2, type=int)
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(
+                        prog='neunp',
+                        description='neural numpy demo',
+                        epilog='')
+    parser.add_argument('-c', '--count', default=2, type=int)
+    parser.add_argument('-t', '--time', default=0, action="store_true")
+
     args = parser.parse_args()
+
+    VAL  = 0.5;   VAL2 = 0.6
+    arr_0 =  (0,0)
+    arr_1 =  (0,VAL)
+    arr_2 =  (VAL,0)
+    arr_3 =  (VAL,VAL)
+
+    def testneu(nnn, tin, tout):
+        tttt = 0
+        for cnt, aa in enumerate(tin):
+            ttt = time.time()
+            nnn.fire(aa)
+            tttt +=  time.time() - ttt
+            print("in", aa[:12], "out",  nnn.outputs, is_ok(nnn.outputs, tout[cnt]))
+        if args.time:
+            print("%.3f ms" % (tttt * 1000) )
+
+    def test_train_check(in_arrx, ou_arrx,  tin_arrx, tou_arrx):
+
+        in_arr = []; tin_arr = []
+        for cnt, cc in enumerate(in_arrx):
+            in_comp =  [0 for aa in range(args.count)]
+            in_arr.append(list(cc) + in_comp)
+            tin_arr.append(list(tin_arrx[cnt]) + in_comp)
+        #print(in_arr)
+        nn = NeuNp(len(in_arr), 1)
+        for aa in range(len(in_arr)):
+            nn.train(in_arr[aa], ou_arrx[aa])
+        testneu(nn, tin_arr, tou_arrx)
 
     # imitate the AND gate
     in_andarr =  (arr_0, arr_1,  arr_2,  arr_3,)

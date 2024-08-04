@@ -124,7 +124,8 @@ class NeuLut():
 
     def dump(self):
         for cnt, aa in enumerate(self.trarr):
-           print("trn: %3d" % cnt, "res:", self.resarr[cnt], aa[:12], "...")
+            arr2 = rle(aa)
+            print("%-2d" % cnt,  self.resarr[cnt], arr2[:6], "...")
 
     def train(self, ins, outs, step = 1):
         #print(ins, outs)

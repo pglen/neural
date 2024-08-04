@@ -270,5 +270,26 @@ def measure(func):
         return ret
     return run
 
-# EOF
+def rle(arr):
+
+    ''' run length encoding '''
+
+    arr2 = []; cntx = 1
+    if not len(arr):
+        return arr2
+
+    prev = arr[0];
+    for bb in arr:
+        if prev != bb:
+            if cntx == 1:
+                arr2.append(prev)
+            else:
+                arr2.append((cntx, prev))
+            prev = bb
+            cntx = 1
+        else:
+            cntx += 1
+    return arr2
+
+            # EOF
 
