@@ -289,7 +289,11 @@ def rle(arr):
             cntx = 1
         else:
             cntx += 1
+
+    # Special case: all the same values
+    if cntx  > 1:
+        arr2.append((cntx-1, prev))
+
     return arr2
 
-            # EOF
-
+# EOF

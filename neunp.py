@@ -37,7 +37,8 @@ class NeuNp():
             print("neulut init ",  "inuts %.03f " % inputs) #, end=' ')
 
         self.inputs  = np.zeros(inputs)
-        self.ouputs  = np.zeros(outputs)
+        self.outputs  = np.zeros(outputs)
+        self.distance = 0
         self.trarr = []
 
     def inlen(self):
@@ -56,21 +57,24 @@ class NeuNp():
          return sum
 
     # --------------------------------------------------------------------
-    # Fire one neuron. Find smallest diff.
+    # Fire one neuron. Find the smallest diff.
 
     def fire(self, ins, stride=1):
         #print("fire", ins[:12])
-        old = 0xffff ; ooo = []
+        old = 0xffff ; outx = []
         for aa in self.trarr:
-            #print("firex",  aa[0][:12], end = "\n")
             ss = self.cmp2(ins, aa[0])
-            #print(ss)
+            if verbose > 1:
+                print("fire",  aa[1], ss, rle(aa[0])[:8], end = "\n")
             if old > ss:
                 old = ss
-                ooo = aa[1]
+                outx = aa[1]
 
-        self.outputs = ooo
-        return ooo
+        self.outputs = outx
+        self.distance = old
+        if verbose > 1:
+            print("outx", outx)
+        return outx
 
     def __str__(self):
         return "in: " + str(self.inputs)[:20]  + " ... out: " + \
@@ -80,12 +84,12 @@ class NeuNp():
         for cnt, aa in enumerate(self.trarr):
             #print(aa[0][:16])
             arr2 = rle(aa[0])
-            print("%-2d" % cnt, aa[1], arr2[:8], " ...")
+            print("dummp %-2d" % cnt, aa[1], arr2[:8], " ...")
 
     def train(self, ins, outs, step = 1):
-        #print(ins, outs)
+        if verbose > 1:
+            print("train", outs, rle(ins)[:8])
         self.trarr.append((np.array(ins), outs, step))
-
 
 if __name__ == '__main__':
 
