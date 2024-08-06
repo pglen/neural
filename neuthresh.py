@@ -21,6 +21,61 @@ import neulut
 LOWPASS = 0
 imgdir = "png"
 
+cntx = 0
+basex = []
+letter = []
+
+def scale(lettx, newx, newy, ppp = None):
+
+    rows = [] ; cols = []
+
+    #print(lettx)
+
+    for nx, ny, val in lettx:
+        if nx not in cols:
+            cols.append(nx)
+        if ny not in rows:
+            rows.append(ny)
+    aspx =  newx /len(cols)   ; aspy =   newy / len(rows)
+    #print("aspx %.3f" % aspx, "aspy %.3f" % aspy, "new:",
+    #                newx, "old", len(cols), newy, len(rows))
+    ret = []
+    for aa in range(newx):
+        offs = len(rows) * aa
+        for bb in range(newy):
+            try:
+                bbb = bb / aspx
+                aaa = aa / aspy
+                #print("%.3f " % aaa, "%.3f " %bbb, int(aaa), int(bbb))
+                val = lettx[int(bbb + offs)] [2]
+            except IndexError:
+                #print(bbb, aaa, sys.exc_info())
+                pass
+            except:
+                print(sys.exc_info())
+            ret.append((aa, bb, val))
+    if ppp:
+        for aa, bb, val in ret:
+            ppp.putpixel((aa, bb), val)
+            pass
+    #print(len(ret))
+    return ret
+
+def callme(keys, val):
+    global cntx, basex, cols, rows
+    if keys[0] == 0 and keys[1] == 0:
+        if cntx == 0:
+            basex = keys[2], keys[3]
+
+        nx = keys[2]-basex[0];  ny = keys[3]-basex[1]
+        dd.putpixel((nx, ny), val)
+        letter.append((nx, ny, val))
+
+        print("%s %3d" % (keys, val),  end = "  ")
+        if cntx % 3 == 2:
+            print()
+        cntx += 1
+
 if __name__ == '__main__':
 
     bw = load_bw_image(os.path.join(imgdir, "srect_white_abc.png"))
@@ -67,19 +122,11 @@ if __name__ == '__main__':
     '''
 
     # Output it
-    ret = sections(thh, thh2, bw, pp)
-    cntx = 0
-    def callme(keys, val):
-        global cntx
-        if keys[0] == 0 and keys[1] == 0:
-            dd.putpixel((keys[2], keys[3]), val)
-            print("%s %3d" % (keys, val),  end = "  ")
-            if cntx % 3 == 2:
-                print()
-            cntx += 1
-
+    ret = sections(thh, thh2, bw) #, pp)
     ret.recurse(callb = callme)
     print()
+    # normalize
+    scale(letter, 10, 17, pp)
 
     sumx.paste(bw)
     sumx.paste(pp, (0, (bw.size[1] + 5) * 1))
@@ -91,4 +138,3 @@ if __name__ == '__main__':
     sumx2.show()
 
 # EOF
-

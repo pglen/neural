@@ -202,26 +202,35 @@ def plotflags(fallx, arrx, plotx, nulval = 0, lab = ""):
 
 from pgdict import *
 
-def sections(thh1x, thh2x, bww, ppp):
+def sections(thh1x, thh2y, bww, ppp = None):
 
-    ''' Boundary by non zero sectons '''
+    ''' Boundary by non zero sectons
+
+          Parameters:
+                    thh1x (arr):    zero crossings x dim
+                    thh2y (arr):    zero crossings y dim
+                    bww (Image):    image for debug output
+                    ppp (Image):    image for debug output
+
+            Returns:
+                    Deepdict array of rendetable
+
+    '''
 
     ret = DeepDict()
 
-    prog = 0; xlen = len(thh2x); curr = 0
+    prog = 0; xlen = len(thh2y); curr = 0
     while True:
         if prog >=  xlen:
             break
-        if thh2x[prog]:
+        if thh2y[prog]:
             while True:
                 if prog >=  xlen:
                     break
-                if  not thh2x[prog]:
+                if  not thh2y[prog]:
                     #print()
                     break
                 # one X section
-                bww.putpixel((prog, 0), 200)
-                #print(prog, end = " ")
                 _sectiony(thh1x, prog, curr, ret, bww, ppp)
                 prog += 1
             curr += 1
@@ -251,7 +260,8 @@ def _sectiony(arry, xx, currx, ret, bww, ppp):
                     break
                 #bww.putpixel((0, progy),  200)
                 col = bww.getpixel((xx, progy))
-                ppp.putpixel((xx, progy), 200 - col)
+                if ppp:
+                    ppp.putpixel((xx, progy), 200 - col)
                 ret.setdeep((currx,curry,xx,progy), col)
                 #ret[currx,curry,xx,progy] = col
                 #print(currx,curry,xx,progy, col)
