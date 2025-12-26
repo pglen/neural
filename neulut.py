@@ -85,12 +85,12 @@ class NeuLut():
         for bb in ddd:
             #res2 = math.sqrt(sqr(bb) + sqr(res2))
             res2 += abs(bb)
+            #res2 += bb
 
         if len(ddd):
             return res2 / len(ddd)
         else:
             return 0
-
 
     def fire_one(self, offs, ins, stride):
 
@@ -127,7 +127,7 @@ class NeuLut():
             arr2 = rle(aa)
             print("%-2d" % cnt,  self.resarr[cnt], arr2[:6], "...")
 
-    def train(self, ins, outs, step = 1):
+    def memorize(self, ins, outs, step = 1):
         #print(ins, outs)
         self.trarr.append(ins)
         self.resarr.append(outs)
@@ -136,29 +136,50 @@ class NeuLut():
         for aa in self.trarr:
             print(aa)
 
-#@measure
-def testx(kind, in_arr, out_arr, tin_arr, tout_arr):
+''' The generalzation comes from the lattitude of the compare. For
+instance, using less than 0.5 for VAL2, the logic interprets it as zero,
+using greater than 0.5, the interpreetation is one.
+'''
 
-    nn = NeuLut(2, 1)
-    #print("NeuLut %s:" % kind, nn)
+# ------------------------------------------------------------------------
+# Tests
 
+XOR, OR, AND, NAND, NOR = range(5)
+
+def tobits(val, lenx):
+    arrx = []
+    for aa in range(lenx-1, -1, -1):
+        if val & 1 << aa: boolx = 1
+        else: boolx = 0
+        #print("bit %d:" % aa, boolx, end = " ")
+        arrx.append(boolx)
+    #print()
+    return arrx
+
+#print(tobits(OR, 3))
+#print(tobits(XOR, 3))
+#print(tobits(AND, 3))
+#print(tobits(NAND, 3))
+#print(tobits(NOR, 3))
+
+def train(kindN, in_arr, out_arr, nn):
+    kkk = tobits(kindN, 4)
     for aa in range(len(in_arr)):
-        nn.train(in_arr[aa], out_arr[aa])
+        inarr = kkk + list(in_arr[aa])
+        nn.memorize(inarr, out_arr[aa])
 
+def testx(kind, kindN, in_arr, out_arr, tin_arr, tout_arr, nn):
+
+    #print("NeuLut %s:" % kind, kindN, kkk, nn)
     #nn.dump()
-    #sys.exit(0)
-
+    kkk = tobits(kindN, 4)
     for aa in range(len(tin_arr)):
-        nn.fire(tin_arr[aa], 1)
+        inarr = kkk + list(in_arr[aa])
+        nn.fire(inarr, 1)
         print(kind, "in:", tin_arr[aa], "out:",
                 nn.outputs, "expect:", tout_arr[aa], end = " ")
         print(is_ok(nn.outputs,  tout_arr[aa]), end = "")
         print()
-
-''' The generalzation comes from the lattitude of the compare. For
-instance, using less than 0.5 for VAL2, the logic interprets it as zero, using
-greater than 0.5, the interpreetation is one.
-'''
 
 VAL  = 1.
 VAL2 = 0.501
@@ -166,15 +187,18 @@ OUT = 1.
 
 if __name__ == '__main__':
 
+    nn = NeuLut(4, 1)
+
     # imitate the AND gate
 
-    in_arr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
-    out_arr =  (0, 0, 0, OUT)
-    tin_arr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
-    tout_arr =  (0, 0, 0, OUT)
+    in_aarr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
+    out_aarr =  (0, 0, 0, OUT)
+    tin_aarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
+    tout_aarr =  (0, 0, 0, OUT)
 
     #ttt = time.time()
-    testx("AND ", in_arr, out_arr, tin_arr, tout_arr)
+    train(AND, in_aarr, out_aarr, nn)
+    #testx("AND ", AND, in_aarr, out_aarr, tin_aarr, tout_aarr, nn)
     #print("Exe: %.3f us" % ((time.time() - ttt) * 1000000))
 
     # -----------------------------------------------------------
@@ -185,26 +209,48 @@ if __name__ == '__main__':
     tin_oarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
     tout_oarr =  (0, VAL, VAL, VAL,)
 
-    testx("OR  ", in_oarr, out_oarr, tin_oarr, tout_oarr)
+    train(OR, in_oarr, out_oarr, nn)
+    #testx("OR  ", OR, in_oarr, out_oarr, tin_oarr, tout_oarr, nn)
 
     # -----------------------------------------------------------
     # imitate the XOR gate
 
-    in_xarr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
-    out_xarr =  (0, OUT, OUT, 0, )
-    tin_xarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
-    tout_xarr =  (0, OUT, OUT, 0, )
+    in_xoarr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL))
+    out_xoarr =  (0, OUT, OUT, 0, )
+    tin_xoarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
+    tout_xoarr =  (0, OUT, OUT, 0, )
 
-    testx("XOR ", in_xarr, out_xarr, tin_xarr, tout_xarr)
+    train(XOR, in_xoarr, out_xoarr, nn)
+    #testx("XOR ", XOR, in_xoarr, out_xoarr, tin_xoarr, tout_xoarr, nn)
 
     # -----------------------------------------------------------
     # imitate the NAND gate
 
-    in_xarr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
-    out_xarr =  (0, OUT, OUT, OUT, )
-    tin_xarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
-    tout_xarr =  (0, OUT, OUT, OUT, )
+    in_narr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
+    out_narr =  (0, OUT, OUT, OUT, )
+    tin_narr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
+    tout_narr =  (0, OUT, OUT, OUT, )
 
-    testx("NAND", in_xarr, out_xarr, tin_xarr, tout_xarr)
+    train(NAND, in_narr, out_narr, nn)
+    #testx("NAND", NAND, in_narr, out_narr, tin_narr, tout_narr, nn)
+
+    # -----------------------------------------------------------
+    # imitate the NOR gate
+
+    in_norr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
+    out_norr =  (OUT, 0, 0, 0, )
+    tin_norr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
+    tout_norr =  (OUT, 0, 0, 0)
+
+    train(NOR, in_norr, out_norr, nn)
+    #testx("NOR", NOR, in_norr, out_norr, tin_norr, tout_norr, nn)
+
+    # Cummulative test
+    print("Cummulative test:")
+    testx("OR  ", OR, in_oarr, out_oarr, tin_oarr, tout_oarr, nn)
+    testx("AND ", AND, in_aarr, out_aarr, tin_aarr, tout_aarr, nn)
+    testx("XOR ", XOR, in_xoarr, out_xoarr, tin_xoarr, tout_xoarr, nn)
+    testx("NAND", NAND, in_narr, out_narr, tin_narr, tout_narr, nn)
+    testx("NOR", NOR, in_norr, out_norr, tin_norr, tout_norr, nn)
 
 # EOF

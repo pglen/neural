@@ -5,7 +5,7 @@ import sys, math
 # ------------------------------------------------------------------------
 # Transfer function for neunet. Calculate logaritmic taper, preserve sign
 
-from neuutil import *
+#from neuutil import *
 
 # ------------------------------------------------------------------------
 # The hyperbolic function
@@ -70,35 +70,34 @@ def tfunc3(val):
 
     return ret
 
-
-if __name__ == '__main__':
-
-    #for aa in range(20):
-    #    bb = -aa / 20
-    #    print(pn(bb), pn(tfunc2(bb)), end=" | ")
-    #    if aa % 4 == 3:
-    #        print()
-    #
-    #print()
-    #
-    #for aa in range(20):
-    #    bb = aa / 20
-    #    print(pn(bb), pn(tfunc2(bb)), end=" | ")
-    #    if aa % 4 == 3:
-    #        print()
+def generate(func):
 
     xx = []; yy = []
-    for aa in range(40):
-        bb = aa / 20 - 1
+    for aa in range(80):
+        bb = aa / 20 - 2
         xx.append(bb)
-        yy.append(tfunc(bb))
+        yy.append(func(bb))
+    return xx, yy
 
+def draw(xx, yy):
 
     import matplotlib.pyplot as plt
-
 
     plt.plot(xx, yy)
     plt.xlabel("X values")
     plt.ylabel("Y values")
     plt.show()
 
+def main():
+
+    print("Generating ...")
+    xx, yy = generate(tfunc)
+    #xx, yy = generate(tfunc2)
+    #xx, yy = generate(tfunc3)
+    print("Drawing ...")
+    draw(xx, yy)
+
+if __name__ == '__main__':
+    main()
+
+# EOF

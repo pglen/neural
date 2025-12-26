@@ -4,8 +4,8 @@ import sys, random, time
 
 from PIL import Image
 
-from collections import defaultdict
-recursivedict = lambda: defaultdict(recursivedict)
+#from collections import defaultdict
+#recursivedict = lambda: defaultdict(recursivedict)
 
 def pn(num):
     return "% -7.3f" % num
@@ -213,7 +213,7 @@ def sections(thh1x, thh2y, bww, ppp = None):
                     ppp (Image):    image for debug output
 
             Returns:
-                    Deepdict array of rendetable
+                    DeepDict array of renderable
 
     '''
 
@@ -305,5 +305,89 @@ def rle(arr):
         arr2.append((cntx-1, prev))
 
     return arr2
+
+
+def scale(lettx, newx, newy, ppp = None):
+
+    rows = [] ; cols = []
+
+    #print(lettx)
+
+    for nx, ny, val in lettx:
+        if nx not in cols:
+            cols.append(nx)
+        if ny not in rows:
+            rows.append(ny)
+    aspx =  newx /len(cols)   ; aspy =   newy / len(rows)
+    #print("aspx %.3f" % aspx, "aspy %.3f" % aspy, "new:",
+    #                newx, "old", len(cols), newy, len(rows))
+    #ret = []
+    retx = ret = DeepDict()
+    for aa in range(newx):
+        offs = len(rows) * aa
+        for bb in range(newy):
+            try:
+                bbb = bb / aspx
+                aaa = aa / aspy
+                #print("%.3f " % aaa, "%.3f " %bbb, int(aaa), int(bbb))
+                val = lettx[int(bbb + offs)] [2]
+            except IndexError:
+                #print(bbb, aaa, sys.exc_info())
+                pass
+            except:
+                print(sys.exc_info())
+            #ret.append((aa, bb, val))
+            retx[aa][bb] = val
+
+    if ppp:
+        pass
+        #for aa, bb, val in ret:
+        #    ppp.putpixel((aa, bb), val)
+        #    pass
+    #print(len(ret))
+    return ret
+
+from PIL import Image, ImageFont, ImageDraw
+
+def trainfonts(letters, nlut, sumx):
+
+    #nlut = neulut.NeuLut(200, 8)
+
+    #font = ImageFont.load_default()
+    font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 20)
+    #font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
+    #font = ImageFont.truetype("/usr/share/fonts/truetype/noto/NotoSansDisplay-Regular.ttf", 20)
+
+    # Flatten font to linear
+    row = 10; hhh = 10
+    aaa = 0; bbb = 0
+    for aa in letters:
+        sss = font.getsize(aa)
+        aaa += sss[0]; bbb += sss[1]
+    aaa //= len(letters)
+    bbb //= len(letters)
+
+    for aa in letters:
+        sss = font.getsize(aa)
+        fff = Image.new("L", sss, color=(255) )
+        draw = ImageDraw.Draw(fff)
+        draw.text((0, 0), aa, font=font)
+        #scale to uniform
+        #fff = fff.resize((sss[0], sss[1]))
+        fff = fff.resize((aaa, bbb))
+
+        ddd = list(fff.getdata())
+        if aa == 'a':
+            testx = ddd[:]
+        #print(aa, len(ddd), sss, ddd)
+        nlut.train(ddd, aa)
+        sumx.paste(fff, (hhh, row,))
+        hhh += aaa + 5
+        if hhh > 450:
+            hhh = 10
+            row += 20
+        #nlut.dump()
+
+    return aaa, bbb, row
 
 # EOF

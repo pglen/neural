@@ -20,9 +20,9 @@ if __name__ == '__main__':
 
     sumx = Image.new("L", (800,600), color=(100) )
 
-    ccc3 = load_font_img("letter_b.png")
-    ccc2  = load_font_img("letter_a.png")
-    ccc = load_font_img("letter_c.png")
+    ccc3 = load_font_img("png/letter_b.png")
+    ccc2  = load_font_img("png/letter_a.png")
+    ccc = load_font_img("png/letter_c.png")
     print("ccc3", ccc3)
     print("ccc2", ccc2)
     print("ccc", ccc)
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     #sys.exit()
     #aaa.show()
 
-    bw = load_bw_image("srect_white_abc.png")
+    bw = load_bw_image("png/srect_white_abc.png")
     arr3 = bw.getdata()
 
     for aa in range(0, bw.size[1], 2):

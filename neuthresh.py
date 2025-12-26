@@ -16,49 +16,28 @@ import matplotlib.pyplot as plt
 from neuutil import *
 from pgutil import *
 from pgdict import *
-import neulut
+import neulut, neunp
 
 LOWPASS = 0
 imgdir = "png"
+
+letters = [ chr(nn) for nn in range(32, 127) ]
+letters = "abcdefgh"
 
 cntx = 0
 basex = []
 letter = []
 
-def scale(lettx, newx, newy, ppp = None):
-
-    rows = [] ; cols = []
-
-    #print(lettx)
-
-    for nx, ny, val in lettx:
-        if nx not in cols:
-            cols.append(nx)
-        if ny not in rows:
-            rows.append(ny)
-    aspx =  newx /len(cols)   ; aspy =   newy / len(rows)
-    #print("aspx %.3f" % aspx, "aspy %.3f" % aspy, "new:",
-    #                newx, "old", len(cols), newy, len(rows))
+def barearr(aaa, bbb, arrx):
     ret = []
-    for aa in range(newx):
-        offs = len(rows) * aa
-        for bb in range(newy):
-            try:
-                bbb = bb / aspx
-                aaa = aa / aspy
-                #print("%.3f " % aaa, "%.3f " %bbb, int(aaa), int(bbb))
-                val = lettx[int(bbb + offs)] [2]
-            except IndexError:
-                #print(bbb, aaa, sys.exc_info())
-                pass
-            except:
-                print(sys.exc_info())
-            ret.append((aa, bb, val))
-    if ppp:
-        for aa, bb, val in ret:
-            ppp.putpixel((aa, bb), val)
-            pass
-    #print(len(ret))
+    for yy in range(bbb):
+        for xx in range(aaa):
+            print(arrx[xx*yy])
+
+    #for aa in arrx:
+    #    #print(arrx[aa])
+    #    ret.append(aa[2])
+
     return ret
 
 def callme(keys, val):
@@ -68,7 +47,7 @@ def callme(keys, val):
             basex = keys[2], keys[3]
 
         nx = keys[2]-basex[0];  ny = keys[3]-basex[1]
-        dd.putpixel((nx, ny), val)
+        #dd.putpixel((nx, ny), val)
         letter.append((nx, ny, val))
 
         print("%s %3d" % (keys, val),  end = "  ")
@@ -120,13 +99,28 @@ if __name__ == '__main__':
     plt.show()
     sys.exit(0)
     '''
+    global nlut
+    nlut = neunp.NeuNp(200, 8)
+    aaa, bbb, row = trainfonts(letters, nlut, sumx)
 
     # Output it
     ret = sections(thh, thh2, bw) #, pp)
     ret.recurse(callb = callme)
     print()
     # normalize
-    scale(letter, 10, 17, pp)
+    sss = scale(letter, 10, 17, pp)
+    #print(sss)
+    bare = barearr(aaa, bbb, sss)
+    print(bare)
+
+    for aa in range(aaa):
+        for bb in range(bbb):
+             pass
+             dd.putpixel((aa, bb), bare[aa + bb * aaa])
+             #dd.putpixel((aa, bb), 100)
+
+    res = nlut.fire(bare)
+    print("res", res)
 
     sumx.paste(bw)
     sumx.paste(pp, (0, (bw.size[1] + 5) * 1))
