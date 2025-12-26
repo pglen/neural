@@ -2,8 +2,6 @@ import numpy as np
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 
-
-
 X, Y = np.meshgrid(np.linspace(-3, 3, 128), np.linspace(-3, 3, 128))
 Z = (1 - X/2 + X**5 + Y**3) * np.exp(-X**2 - Y**2)
 

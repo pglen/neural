@@ -7,12 +7,10 @@ import os, sys, random, math
 
 from PIL import Image, ImageFont, ImageDraw
 
-#import trans, tenticle, neuutil
 
-from neuutil import *
-
-import neulut
-import neunp
+from neulib.neuutil import *
+import neulib.neulut
+#import neunp
 
 verbose = 0
 imgdir = "png"
@@ -39,8 +37,7 @@ if __name__ == '__main__':
     ppp = Image.new(bw.mode, bw.size, color=255)
     sumx = Image.new("L", (500,300), color=(150) )
 
-    nlut = neunp.NeuNp(200, 8)
-
+    #nlut = neunp.NeuNp(200, 8)
     aaa, bbb, row = trainfonts(letters, nlut, sumx)
 
     # Recog. For every coordinate, build input

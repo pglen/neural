@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
-import sys, random, time
+import os, sys, random, time
 
 from PIL import Image
 
 #from collections import defaultdict
 #recursivedict = lambda: defaultdict(recursivedict)
 
+sys.path.append(os.path.dirname(__file__))
+from pgdict import *
+
 def pn(num):
     return "% -7.3f" % num
-
-# ------------------------------------------------------------------------
 
 # Deliver a random member of an array
 
@@ -200,7 +201,6 @@ def plotflags(fallx, arrx, plotx, nulval = 0, lab = ""):
             xxx.append(ccc); yyy.append(flag)
     plotx.scatter(xxx, yyy, label=lab)
 
-from pgdict import *
 
 def sections(thh1x, thh2y, bww, ppp = None):
 

@@ -5,18 +5,15 @@
 
 '''
     Evaluate letter boundaries. Grid method.
-
 '''
 
 import sys, random, math
 
 from PIL import Image
 
-#import trans, tenticle, neuutil
-
-from neuutil import *
-from pgutil import *
-import neulut
+from neulib.neuutil import *
+from neulib.pgutil import *
+import neulib.neulut as neulut
 
 imgdir = "png"
 

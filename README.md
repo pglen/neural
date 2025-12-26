@@ -1,1 +1,1 @@
-# Tempate for pygobject GUI
+# Toying around with neurons

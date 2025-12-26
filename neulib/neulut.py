@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
 # ------------------------------------------------------------------------
-# Neural network test
+# NEULUT: Neural Lookup Tables
 
 import random, math, sys
-
-from neuutil import *
-from pgutil import *
 
 VERBOSE = 0
 PGDEBUG = 1
@@ -14,6 +11,8 @@ QUADRATIC = 0
 # Help identify a neuron by serial number
 
 gl_serial = 0
+
+from pgutil import *
 
 # ------------------------------------------------------------------------
 
@@ -27,13 +26,13 @@ class NeuLut():
     def __init__(self, inputs, outputs):
 
         global gl_serial
-
         # These are helpers
         self.serial = gl_serial; gl_serial += 1;
 
         if VERBOSE:
             print("NeuLut init ",  "inuts %.03f " % inputs) #, end=' ')
 
+        self.strength = 0.
         self.inputs  = []; self.outputs = []; self.trarr = []
 
         # Alloc, provide defaults
@@ -51,13 +50,13 @@ class NeuLut():
     def outlen(self):
         return len(self.outputs)
 
-    def _cmp(self, ins, ref, step = 1, stride = 1):
+    def _cmp(self, ins, ref, step = 1, stride = 1, quad = 0):
 
         '''  Compare arrays, return sum of mismatch value.
              Obey step value. The flag QUADRATIC will use
              the squre function.
         '''
-        #print("cmp", ins, val, "step", step, "strde", stride)
+        #print("cmp", ins, val, "step:", step, "stirde:", stride)
         ddd = []; res2 = 0.
         prog = 0; prog2 = 0
         try:
@@ -66,8 +65,10 @@ class NeuLut():
                     break
                 if prog >= len(ref):
                     break
-                #diff = sqr(ins[prog2] - ref[prog])
-                diff = ins[prog2] - ref[prog]
+                if quad:
+                    diff = sqr(ins[prog2] - ref[prog])
+                else:
+                    diff = ins[prog2] - ref[prog]
                 #print("diff", diff)
                 ddd.append(diff)
                 prog  +=  step
@@ -144,113 +145,73 @@ using greater than 0.5, the interpreetation is one.
 # ------------------------------------------------------------------------
 # Tests
 
-XOR, OR, AND, NAND, NOR = range(5)
-
-def tobits(val, lenx):
-    arrx = []
-    for aa in range(lenx-1, -1, -1):
-        if val & 1 << aa: boolx = 1
-        else: boolx = 0
-        #print("bit %d:" % aa, boolx, end = " ")
-        arrx.append(boolx)
-    #print()
-    return arrx
-
-#print(tobits(OR, 3))
-#print(tobits(XOR, 3))
-#print(tobits(AND, 3))
-#print(tobits(NAND, 3))
-#print(tobits(NOR, 3))
-
-def train(kindN, in_arr, out_arr, nn):
-    kkk = tobits(kindN, 4)
-    for aa in range(len(in_arr)):
-        inarr = kkk + list(in_arr[aa])
-        nn.memorize(inarr, out_arr[aa])
-
-def testx(kind, kindN, in_arr, out_arr, tin_arr, tout_arr, nn):
-
-    #print("NeuLut %s:" % kind, kindN, kkk, nn)
-    #nn.dump()
-    kkk = tobits(kindN, 4)
-    for aa in range(len(tin_arr)):
-        inarr = kkk + list(in_arr[aa])
-        nn.fire(inarr, 1)
-        print(kind, "in:", tin_arr[aa], "out:",
-                nn.outputs, "expect:", tout_arr[aa], end = " ")
-        print(is_ok(nn.outputs,  tout_arr[aa]), end = "")
-        print()
-
-VAL  = 1.
-VAL2 = 0.501
-OUT = 1.
-
 if __name__ == '__main__':
 
-    nn = NeuLut(4, 1)
+    import neuutil
+
+    VAL   = 1. ;  VAL2  = 0.51 ; OUT   = 1.
+    in_arr  =  ( (0, 0), (VAL, 0),  (0, VAL),  (VAL, VAL) )
+    tin_arr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
+    XOR, OR, AND, NAND, NOR = range(5)
+
+    nn = NeuLut(5, 1)
+
+    def tobits(val, lenx):
+        ''' Convert number to digital bits '''
+        arrx = []
+        for aa in range(lenx-1, -1, -1):
+            if val & 1 << aa: boolx = 1
+            else: boolx = 0
+            arrx.append(boolx)
+        return arrx
+    #for aa in range(5):
+    #    print(aa, ":", tobits(aa, 3))
+    def train(kindN, in_arr, out_arr, nn):
+        kkk = tobits(kindN, 4)
+        for aa in range(len(in_arr)):
+            inarr = kkk + list(in_arr[aa])
+            nn.memorize(inarr, out_arr[aa])
+
+    def testx(kind, kindN, in_arr, out_arr, tin_arr, tout_arr, nn):
+        #print("NeuLut %s:" % kind, kindN, kkk, nn)
+        kkk = tobits(kindN, 4)
+        for aa in range(len(tin_arr)):
+            inarr = kkk + list(in_arr[aa])
+            nn.fire(inarr, 1)
+            print("%-5s" % kind, "in:", tin_arr[aa], "out:", nn.outputs,  end = " ")
+            print("expect:", tout_arr[aa], end = " ")
+            print(neuutil.is_ok(nn.outputs,  tout_arr[aa]))
 
     # imitate the AND gate
+    out_aarr =  (0, 0, 0, VAL)
+    tout_aarr =  (0, 0, 0, VAL)
+    train(AND, in_arr, out_aarr, nn)
 
-    in_aarr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
-    out_aarr =  (0, 0, 0, OUT)
-    tin_aarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
-    tout_aarr =  (0, 0, 0, OUT)
-
-    #ttt = time.time()
-    train(AND, in_aarr, out_aarr, nn)
-    #testx("AND ", AND, in_aarr, out_aarr, tin_aarr, tout_aarr, nn)
-    #print("Exe: %.3f us" % ((time.time() - ttt) * 1000000))
-
-    # -----------------------------------------------------------
     # imitate the OR gate
-
-    in_oarr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
     out_oarr =  (0, OUT, OUT, OUT,)
-    tin_oarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
     tout_oarr =  (0, VAL, VAL, VAL,)
+    train(OR, in_arr, out_oarr, nn)
 
-    train(OR, in_oarr, out_oarr, nn)
-    #testx("OR  ", OR, in_oarr, out_oarr, tin_oarr, tout_oarr, nn)
-
-    # -----------------------------------------------------------
     # imitate the XOR gate
-
-    in_xoarr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL))
     out_xoarr =  (0, OUT, OUT, 0, )
-    tin_xoarr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
     tout_xoarr =  (0, OUT, OUT, 0, )
+    train(XOR, in_arr, out_xoarr, nn)
 
-    train(XOR, in_xoarr, out_xoarr, nn)
-    #testx("XOR ", XOR, in_xoarr, out_xoarr, tin_xoarr, tout_xoarr, nn)
-
-    # -----------------------------------------------------------
     # imitate the NAND gate
-
-    in_narr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
     out_narr =  (0, OUT, OUT, OUT, )
-    tin_narr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
     tout_narr =  (0, OUT, OUT, OUT, )
+    train(NAND, in_arr, out_narr, nn)
 
-    train(NAND, in_narr, out_narr, nn)
-    #testx("NAND", NAND, in_narr, out_narr, tin_narr, tout_narr, nn)
-
-    # -----------------------------------------------------------
     # imitate the NOR gate
-
-    in_norr =  ( (0, 0), (VAL, 0), (0, VAL), (VAL, VAL) )
     out_norr =  (OUT, 0, 0, 0, )
-    tin_norr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
     tout_norr =  (OUT, 0, 0, 0)
+    train(NOR, in_arr, out_norr, nn)
 
-    train(NOR, in_norr, out_norr, nn)
-    #testx("NOR", NOR, in_norr, out_norr, tin_norr, tout_norr, nn)
-
-    # Cummulative test
-    print("Cummulative test:")
-    testx("OR  ", OR, in_oarr, out_oarr, tin_oarr, tout_oarr, nn)
-    testx("AND ", AND, in_aarr, out_aarr, tin_aarr, tout_aarr, nn)
-    testx("XOR ", XOR, in_xoarr, out_xoarr, tin_xoarr, tout_xoarr, nn)
-    testx("NAND", NAND, in_narr, out_narr, tin_narr, tout_narr, nn)
-    testx("NOR", NOR, in_norr, out_norr, tin_norr, tout_norr, nn)
+    #print("Cummulative test:")
+    testx("OR:", OR,  in_arr, out_oarr, tin_arr, tout_oarr, nn)
+    testx("AND:", AND, in_arr, out_aarr, tin_arr, tout_aarr, nn)
+    testx("XOR:", XOR, in_arr, out_xoarr, tin_arr, tout_xoarr, nn)
+    testx("NAND:", NAND,in_arr, out_narr, tin_arr, tout_narr, nn)
+    testx("NOR:",  NOR, in_arr, out_norr, tin_arr, tout_norr, nn)
 
 # EOF

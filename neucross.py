@@ -13,9 +13,9 @@ import sys, random, math
 from PIL import Image
 import matplotlib.pyplot as plt
 
-from neuutil import *
-from pgutil import *
-import neulut
+from neulib.neuutil import *
+from  neulib.pgutil import *
+import  neulib.neulut as newlut
 
 LOWPASS = 0
 

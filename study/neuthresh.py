@@ -13,10 +13,12 @@ import sys, random, math
 from PIL import Image
 import matplotlib.pyplot as plt
 
-from neuutil import *
-from pgutil import *
-from pgdict import *
-import neulut, neunp
+from neulib.neuutil import *
+from neulib.pgutil import *
+from neulib.pgdict import *
+
+import neulib.neulut
+#import neulib.neunp
 
 LOWPASS = 0
 imgdir = "png"
@@ -100,8 +102,8 @@ if __name__ == '__main__':
     sys.exit(0)
     '''
     global nlut
-    nlut = neunp.NeuNp(200, 8)
-    aaa, bbb, row = trainfonts(letters, nlut, sumx)
+    #nlut = neunp.NeuNp(200, 8)
+    #aaa, bbb, row = trainfonts(letters, nlut, sumx)
 
     # Output it
     ret = sections(thh, thh2, bw) #, pp)

@@ -16,10 +16,14 @@ help:
 	@echo "	 make install    -- Install project "
 	@echo "	 make pack       -- package project "
 	@echo "	 make git        -- checkin project "
+	@echo "	 make clean      -- clean temps "
 	@echo
 
 install:
 	@./install.py
+
+clean:
+	@find . -name __pycache__ -exec rm -rf {} \;
 
 pack:
 	@./pack.sh

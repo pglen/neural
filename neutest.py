@@ -9,9 +9,11 @@ from PIL import Image
 
 #import trans, tenticle, neuutil
 
-from neuutil import *
-from pgutil import *
-import neulut
+sys.path.append("neulib")
+
+from neulib.neuutil import *
+from neulib.pgutil import *
+import neulib.neulut as neulut
 
 verbose = 0
 
@@ -37,14 +39,14 @@ if __name__ == '__main__':
     #print("nn", nn, nn.inlen())
 
     arrz = newarr(ccc.size[0] * ccc.size[1], 0)
-    nn.train(arrz, ("1",), ccc.size[0])
+    nn.memorize(arrz, ("1",), ccc.size[0])
 
     arrf = newarr(ccc.size[0] * ccc.size[1], 255)
-    nn.train(arrf, ("0",), ccc.size[0])
+    nn.memorize(arrf, ("0",), ccc.size[0])
 
-    nn.train(list(ccc.getdata()),  ("b",), ccc.size[0])
-    nn.train(list(ccc2.getdata()), ("a",), ccc2.size[0])
-    nn.train(list(ccc3.getdata()), ("c",), ccc3.size[0])
+    nn.memorize(list(ccc.getdata()),  ("b",), ccc.size[0])
+    nn.memorize(list(ccc2.getdata()), ("a",), ccc2.size[0])
+    nn.memorize(list(ccc3.getdata()), ("c",), ccc3.size[0])
 
     #print("tr", nn.showtrain())
     #sys.exit()

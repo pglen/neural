@@ -9,8 +9,8 @@ from PIL import Image, ImageFont, ImageDraw
 
 #import trans, tenticle, neuutil
 
-from neuutil import *
-from neulut import *
+from neulib.neuutil import *
+from neulib.neulut import *
 
 verbose = 0
 letters = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ " \
@@ -23,7 +23,7 @@ space = list(" ")
 #letters += [ chr(nn) for nn in range(96, 128) ] + space
 
 letters = [ chr(nn) for nn in range(128) ]
-print(letters)
+#print(letters)
 
 #sys.exit()
 
@@ -35,7 +35,8 @@ if __name__ == '__main__':
     # use a bitmap font
     #font = ImageFont.load_default()
     #font = ImageFont.truetype(font="") # needs filename
-    font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 20)
+    #font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 20)
+    font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
     #font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
     #font = ImageFont.truetype("/usr/share/fonts/truetype/noto/NotoSansDisplay-Regular.ttf", 20)
 
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     mx = 0; my = 0
     hhh = 10
     for aa in letters:
-        print(aa, font.getsize(aa), end = "  ")
+        print("letter:", aa, font.getsize(aa), end = "  ")
 
         fff = Image.new("L", font.getsize(aa), color=(255) )
         draw = ImageDraw.Draw(fff)
@@ -53,7 +54,8 @@ if __name__ == '__main__':
 
         hhh += font.getsize(aa)[0] + 4
 
-        if hhh > 450 or aa == " ":
+        #if hhh > 450 or aa == " ":
+        if hhh > 450:
             hhh = 10
             row += 20
 

@@ -51,7 +51,7 @@ if __name__ == '__main__':
     #nn.train(arrf, ("0",), ccc.size[0])
 
     for xxx in range(len(cccc)):
-        nn.train(list(cccc[xxx].getdata()),  (xxx,), cccc[xxx].size[0])
+        nn.memorize(list(cccc[xxx].getdata()),  (xxx,), cccc[xxx].size[0])
 
     #print("tr", nn.showtrain())
     #sys.exit()
@@ -114,7 +114,7 @@ if __name__ == '__main__':
                 pass
             except:
                 print(sys.exc_info())
-                print_exception("ff")
+                #print_exception("ff")
                 pass
 
     #bw.show()
