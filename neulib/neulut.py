@@ -56,7 +56,7 @@ class NeuLut():
              Obey step value. The flag QUADRATIC will use
              the squre function.
         '''
-        #print("cmp", ins, val, "step:", step, "stirde:", stride)
+        #print("cmp", ins, ref, "step:", step, "stirde:", stride)
         ddd = []; res2 = 0.
         prog = 0; prog2 = 0
         try:
@@ -76,10 +76,13 @@ class NeuLut():
 
         except IndexError:
             #print(sys.exc_info())
+            print_exception("cmp idx")
+            #raise
             pass
         except:
             #print("cmp", sys.exc_info())
             print_exception("cmp")
+            #raise
             pass
 
         #print("ddd", end = " "); parr(ddd)

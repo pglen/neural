@@ -9,9 +9,9 @@ from PIL import Image
 
 #import trans, tenticle, neuutil
 
-from neuutil import *
-from pgutil import *
-import neulut
+from neulib.neuutil import *
+from neulib.pgutil import *
+import neulib.neulut as neulut
 
 verbose = 0
 
@@ -81,11 +81,12 @@ if __name__ == '__main__':
 
                             except IndexError:
                                 arr4.append(200)
+                                raise
                                 pass
                             except:
                                 print(sys.exc_info())
+                                raise
                                 pass
-
                     #print("ddd", ddd)
                     fff = nn.fire_one(ddd, arr4, cccc[ddd].size[0])
                     if fff[0] !=  ("0") and nn.strength < 15000: #fff[0] !=  ("1"):
@@ -93,30 +94,31 @@ if __name__ == '__main__':
                                     #"%.3f" % (idx / bw.size[0]), \
                                     #x %.3f" % (idx % bw.size[0]),
                                     "%.3f" % nn.strength, end = "\n")
-
-                    if  ddd == 0:
+                    if ddd == 0:
                         try:
                             bw2 = Image.new("L", (cccc[ddd].size[0],
                                             cccc[ddd].size[1]), color=200 )
                             bw2.putdata(arr4)
                             sumx.paste(bw2, (bb*(cccc[ddd].size[0]+1),
                                         aa*(cccc[ddd].size[1]+1)))
-
                         except IndexError:
                             print(sys.exc_info())
+                            raise
                             pass
                         except:
                             print(sys.exc_info())
+                            raise
                             pass
-
             except IndexError:
                 #print(sys.exc_info())
+                print_exception("ff idx")
+                raise
                 pass
             except:
-                print(sys.exc_info())
-                #print_exception("ff")
+                #print(sys.exc_info())
+                print_exception("ff")
+                raise
                 pass
-
     #bw.show()
     #ccc.show()
     #ccc2.show()
