@@ -7,8 +7,6 @@ import sys, random, math
 
 from PIL import Image
 
-#import trans, tenticle, neuutil
-
 from neulib.neuutil import *
 from neulib.pgutil import *
 import neulib.neulut as neulut

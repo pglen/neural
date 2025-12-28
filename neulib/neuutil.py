@@ -41,10 +41,9 @@ def sqr(vvv):
 def parr(arr):
     for aa in arr:
         print(pn(aa), end = " ")
-
     print()
 
-def is_ok(val, ref):
+def print_is_ok(val, ref):
     if val == ref:
         ret = "\033[32;1mOK\033[0m"
     else:
