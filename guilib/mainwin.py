@@ -57,11 +57,12 @@ class MainWin(Gtk.Window):
         if www == 0 or hhh == 0:
             www = Gdk.screen_width(); hhh = Gdk.screen_height();
 
-        if www / hhh > 2:
-            self.set_default_size(5*www/8, 7*hhh/8)
-        else:
-            self.set_default_size(7*www/8, 7*hhh/8)
+        #if www / hhh > 2:
+        #    self.set_default_size(5*www/8, 7*hhh/8)
+        #else:
+        #    self.set_default_size(7*www/8, 7*hhh/8)
 
+        self.set_default_size(6*www/8, 6*hhh/8)
 
         '''self.set_flags(Gtk.CAN_FOCUS | Gtk.SENSITIVE)
 
@@ -76,31 +77,23 @@ class MainWin(Gtk.Window):
         self.connect("destroy", self.OnExit)
         self.connect("key-press-event", self.key_press_event)
         self.connect("button-press-event", self.button_press_event)
-
         try:
             self.set_icon_from_file("icon.png")
         except:
             pass
-
         vbox = Gtk.VBox();
-
         merge = Gtk.UIManager()
         #self.mywin.set_data("ui-manager", merge)
-
         aa = create_action_group(self)
         merge.insert_action_group(aa, 0)
         self.add_accel_group(merge.get_accel_group())
-
         merge_id = merge.new_merge_id()
-
         try:
             mergeid = merge.add_ui_from_string(ui_info)
         except GLib.GError as msg:
             print("Building menus failed: %s" % msg)
-
         self.mbar = merge.get_widget("/MenuBar")
         #self.mbar.show()
-
         self.tbar = merge.get_widget("/ToolBar");
         #self.tbar.show()
 

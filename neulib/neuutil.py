@@ -1,49 +1,56 @@
 #!/usr/bin/env python
 
 import os, sys, random, time
+from PIL import Image, ImageFont, ImageDraw
 
-from PIL import Image
+ddd = os.path.dirname(__file__)
+if ddd not in sys.path:
+    sys.path.append(ddd)
 
-#from collections import defaultdict
-#recursivedict = lambda: defaultdict(recursivedict)
-
-sys.path.append(os.path.dirname(__file__))
 from pgdict import *
 
 def pn(num):
     return "% -7.3f" % num
 
-# Deliver a random member of an array
-
 def randmemb(var):
-    if type(var) != type( () ) and type(var) != type([]) :
+
+    ''' Deliver a random member of an array '''
+
+    if type(var) != type(()) and type(var) != type([]) :
         raise ValueError("Must be a list / array")
     rnd = random.randint(0, len(var)-1)
     #print "randmemb", rnd, "of", len(var)-1
     return var[rnd];
 
-# ------------------------------------------------------------------------
-# Deliver a random number in range of 0 to +1
 
 def neurand():
+
+    ''' Deliver a random number in range of 0 to +1 '''
+
     ret = random.random();
     #print "%+0.3f " % ret,
     return ret
 
 def neurand2():
+
+    ''' Deliver a random number in range of -1 to +1 '''
+
     ret = random.random() * 2 - 1;
     #print("neurand %+0.3f " % ret)
     return ret
 
 def sqr(vvv):
+    ''' return square of number '''
     return vvv * vvv
 
 def parr(arr):
+    ''' print array '''
     for aa in arr:
         print(pn(aa), end = " ")
     print()
 
 def print_is_ok(val, ref):
+    ''' output terminal string '''
     if val == ref:
         ret = "\033[32;1mOK\033[0m"
     else:
@@ -51,6 +58,7 @@ def print_is_ok(val, ref):
     return ret
 
 def newarr(size, fill):
+    ''' Create array with size and fill '''
     arrx = []
     for ee in range(size):
         arrx.append(fill)
@@ -115,12 +123,10 @@ def load_font_img(fname):
 
     return ccc
 
-
 def load_bw_image(fname):
-
+    '''   '''
     im = Image.open(fname)
     #print(im.format, im.size, im.mode, im.getbands())
-
     arr3 = []
     for aa in range(im.size[1]):
         for bb in range(im.size[0]):
@@ -132,10 +138,8 @@ def load_bw_image(fname):
                 pix = 0
 
             arr3.append(pix)
-
     bw = Image.new("L", im.size, color=(255) )
     bw.putdata(arr3)
-
     return bw
 
 def lowpass(arrx, factorx = 1):
@@ -151,55 +155,59 @@ def lowpass(arrx, factorx = 1):
             lll[ddd] = avg // 3
     return lll
 
-def falledges(arrx):
+def raisededges(arrx, size):
 
-    ''' detect falling edges '''
+    ''' detect raising  edges '''
 
-    lenx = len(arrx)
-    prev = 0; fall = 0
+    lenx = len(arrx) ; prev = 255
     eee = [0 for _ in range(lenx) ]
     for ddd in range(lenx):
-        if arrx[ddd] < prev:
-            if not fall:
-                fall = True
-                eee[max(0, ddd-1)] = True
-        else:
-            fall = False
+        if prev < arrx[ddd]:
+            eee[ddd] = True
         prev = arrx[ddd]
     return eee
 
-def raisededges(arrx):
+def falledges(arrx, size):
 
     ''' detect falling edges '''
 
-    lenx = len(arrx)
-    prev = 0; fall = 0
+    lenx = len(arrx) ; prev = 255
     eee = [0 for _ in range(lenx) ]
     for ddd in range(lenx):
-        if arrx[ddd] > prev:
-            if not fall:
-                fall = True
-                eee[max(0, ddd-1)] = True
-        else:
-            fall = False
+        if prev > arrx[ddd]:
+            eee[ddd] = True
         prev = arrx[ddd]
     return eee
 
-def plotvals(arrx, plotx, lab = ""):
-    xx = []; yy = []
-    for cnt, aa in enumerate(arrx):
-        xx.append(cnt); yy.append(aa)
-    plotx.plot(xx, yy, label=lab)
+def vraisededges(arrx, size):
 
-def plotflags(fallx, arrx, plotx, nulval = 0, lab = ""):
+    ''' detect vertical raising  edges '''
 
-    xxx = []; yyy = []
-    for ccc in range(len(arrx)):
-        if fallx[ccc]:
-            flag = arrx[ccc]
-            xxx.append(ccc); yyy.append(flag)
-    plotx.scatter(xxx, yyy, label=lab)
+    lenx = len(arrx)
+    eee = [0 for _ in range(lenx) ]
+    for aa in range(size[0]):
+        prev = 255
+        for bb in range(size[1]):
+            ddd = aa + size[0] * bb
+            if prev > arrx[ddd]:
+                eee[ddd] = True
+            prev = arrx[ddd]
+    return eee
 
+def vfalledges(arrx, size):
+
+    ''' detect vertical falling edges '''
+
+    lenx = len(arrx)
+    eee = [0 for _ in range(lenx) ]
+    for aa in range(size[0]):
+        prev = 255
+        for bb in range(size[1]):
+            ddd = aa + size[0] * bb
+            if prev < arrx[ddd]:
+                eee[ddd] = True
+            prev = arrx[ddd]
+    return eee
 
 def sections(thh1x, thh2y, bww, ppp = None):
 
@@ -213,7 +221,6 @@ def sections(thh1x, thh2y, bww, ppp = None):
 
             Returns:
                     DeepDict array of renderable
-
     '''
 
     ret = DeepDict()
@@ -283,11 +290,10 @@ def rle(arr):
 
     ''' run length encoding '''
 
-    arr2 = []; cntx = 1
+    arr2 = []
     if not len(arr):
         return arr2
-
-    prev = arr[0];
+    prev = arr[0]; cntx = 1
     for bb in arr:
         if prev != bb:
             if cntx == 1:
@@ -298,20 +304,15 @@ def rle(arr):
             cntx = 1
         else:
             cntx += 1
-
     # Special case: all the same values
-    if cntx  > 1:
+    if cntx > 1:
         arr2.append((cntx-1, prev))
-
     return arr2
-
 
 def scale(lettx, newx, newy, ppp = None):
 
-    rows = [] ; cols = []
-
     #print(lettx)
-
+    rows = [] ; cols = []
     for nx, ny, val in lettx:
         if nx not in cols:
             cols.append(nx)
@@ -337,7 +338,6 @@ def scale(lettx, newx, newy, ppp = None):
                 print(sys.exc_info())
             #ret.append((aa, bb, val))
             retx[aa][bb] = val
-
     if ppp:
         pass
         #for aa, bb, val in ret:
@@ -346,47 +346,33 @@ def scale(lettx, newx, newy, ppp = None):
     #print(len(ret))
     return ret
 
-from PIL import Image, ImageFont, ImageDraw
+def genfonts(neu, fnamex, lettersx, sumx = None):
 
-def trainfonts(letters, nlut, sumx):
+    '''
+        neu:        neulut
+        fnamex      name of font
+        lettersx    list of letters
+        sumx        debug image to dump fonts to
+    '''
 
-    #nlut = neulut.NeuLut(200, 8)
-
-    #font = ImageFont.load_default()
-    font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 20)
-    #font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
-    #font = ImageFont.truetype("/usr/share/fonts/truetype/noto/NotoSansDisplay-Regular.ttf", 20)
-
-    # Flatten font to linear
-    row = 10; hhh = 10
-    aaa = 0; bbb = 0
-    for aa in letters:
-        sss = font.getsize(aa)
-        aaa += sss[0]; bbb += sss[1]
-    aaa //= len(letters)
-    bbb //= len(letters)
-
-    for aa in letters:
-        sss = font.getsize(aa)
-        fff = Image.new("L", sss, color=(255) )
+    font = ImageFont.truetype(fnamex, 20)
+    if sumx:
+        sumbox = sumx.getbbox()
+        ypos = 10 ;  xpos = 10
+    for aa in lettersx:
+        sss = font.getbbox(aa)
+        #print("letter:", aa, sss, end = "  ")
+        fff = Image.new("L", sss[2:], color=(255) )
         draw = ImageDraw.Draw(fff)
         draw.text((0, 0), aa, font=font)
-        #scale to uniform
-        #fff = fff.resize((sss[0], sss[1]))
-        fff = fff.resize((aaa, bbb))
-
         ddd = list(fff.getdata())
-        if aa == 'a':
-            testx = ddd[:]
-        #print(aa, len(ddd), sss, ddd)
-        nlut.train(ddd, aa)
-        sumx.paste(fff, (hhh, row,))
-        hhh += aaa + 5
-        if hhh > 450:
-            hhh = 10
-            row += 20
-        #nlut.dump()
-
-    return aaa, bbb, row
+        neu.memorize(ddd, aa)
+        if sumx:
+            sumx.paste(fff, (xpos, ypos,))
+            xpos += sss[2] + 4
+            if xpos > sumbox[2] - 15:
+                xpos = 10 ; ypos += 20
+        #print("ddd:", len(ddd), ddd)
+    return neu
 
 # EOF

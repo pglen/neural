@@ -11,8 +11,6 @@ from neulib.neuutil import *
 from neulib.pgutil import *
 import neulib.neulut as neulut
 
-verbose = 0
-
 imgdir = "png"
 
 if __name__ == '__main__':
@@ -40,7 +38,6 @@ if __name__ == '__main__':
     nn = neulut.NeuLut(ccc.size[0] * ccc.size[1], 2)
 
     #print("nn", nn, nn.inlen())
-
 
      #arrz = newarr(ccc.size[0] * ccc.size[1], 0)
     #nn.train(arrz, ("1",), ccc.size[0])

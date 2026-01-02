@@ -44,8 +44,8 @@ in_arr3 = ( \
          0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 1, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 1, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
          )
 in_tarr0 = ( \
@@ -58,7 +58,6 @@ in_tarr0 = ( \
          0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
          )
-
 out_arr0 = [0, 0]
 out_arr1 = [0, 1]
 out_arr2 = [1, 0]
@@ -76,18 +75,18 @@ if __name__ == '__main__':
     nn.memorize(in_arr2, out_arr2)
     nn.memorize(in_arr3, out_arr3)
 
-    aa = nn.recall(in_arr0, 1)
-    bb = nn.recall(in_arr1, 1)
-    cc = nn.recall(in_arr2, 1)
-    dd = nn.recall(in_arr3, 1)
-    ee = nn.recall(in_tarr0, 1)
+    aa = nn.recall(in_arr0, 1) ; aaa = nn.deviation
+    bb = nn.recall(in_arr1, 1) ; bbb = nn.deviation
+    cc = nn.recall(in_arr2, 1) ; ccc = nn.deviation
+    dd = nn.recall(in_arr3, 1) ; ddd = nn.deviation
+    ee = nn.recall(in_tarr0, 1); eee = nn.deviation
     print("exe time: %.2f us" % (1000000 *(time.time() - ttt)))
 
-    print(aa)
-    print(bb)
-    print(cc)
-    print(dd)
-    print("tr:", ee)  # Will match arr2
+    print(aaa, aa)
+    print(bbb, bb)
+    print(ccc, cc)
+    print(ddd, dd)
+    print("tr:", eee, ee)  # Will match arr2
 
     #testx("OR:", OR,  in_arr, out_oarr, tin_arr, tout_oarr, nn)
 
