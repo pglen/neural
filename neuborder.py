@@ -23,16 +23,11 @@ if __name__ == '__main__':
 
     bw = load_bw_image(os.path.join(imgdir,"srect_white_abc.png"))
 
-    #for aa in range(0, bw.size[1], 1):
-    #    for bb in range(0, bw.size[0], 1):
-    #        pxx = bw.getpixel((bb, aa),)
-    #        bw.putpixel((bb, aa,), pxx+200)
-
     # Histogram
     freq = [0 for _ in range(256) ]
     for aa in range(0, bw.size[1], 1):
         for bb in range(0, bw.size[0], 1):
-            pxx = 255 - bw.getpixel((bb, aa),)  # white is zero
+            pxx = bw.getpixel((bb, aa),)
             freq[pxx] += 1
     old = 0; ocnt = 0
     for cnt, aa in enumerate(freq):
@@ -41,7 +36,7 @@ if __name__ == '__main__':
         if old < aa:
             old = aa; ocnt = cnt
 
-    print("background color:", ocnt)
+    #print("background color:", ocnt)
     #print(freq); ocnt = 0
     #sys.exit(0)
 
@@ -49,7 +44,7 @@ if __name__ == '__main__':
     for aa in range(0, bw.size[1], 1):
         sss = 0
         for bb in range(0, bw.size[0], 1):
-            pxx = 255 - bw.getpixel((bb, aa))  # white is zero
+            pxx = bw.getpixel((bb, aa))  # white is zero
             #print(pxx, end = " ")
             #bw.putpixel((bb, aa,), 10)
             sss += pxx
@@ -62,7 +57,7 @@ if __name__ == '__main__':
     for xx in range(0, bw.size[0], 1):
         ssss = 0
         for yy in range(0, bw.size[1], 1):
-            pxx2 = 255 - bw.getpixel((xx, yy))  # white is zero
+            pxx2 = bw.getpixel((xx, yy))  # white is zero
             #bw.putpixel((xx, yy,), 10)
             ssss += pxx2
         #print(xx, ssss, end = " - " )

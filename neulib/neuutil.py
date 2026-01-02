@@ -22,7 +22,6 @@ def randmemb(var):
     #print "randmemb", rnd, "of", len(var)-1
     return var[rnd];
 
-
 def neurand():
 
     ''' Deliver a random number in range of 0 to +1 '''
@@ -207,6 +206,15 @@ def vfalledges(arrx, size):
             if prev < arrx[ddd]:
                 eee[ddd] = True
             prev = arrx[ddd]
+    return eee
+
+def crossfunc(arr1, arr2):
+    lenx = len(arr1)
+    eee = [0 for _ in range(lenx) ]
+    for idx in range(lenx):
+        #print(arr1[idx], arr2[idx], end = "  ")
+        if arr1[idx] and arr2[idx]:
+            eee[idx] = True
     return eee
 
 def sections(thh1x, thh2y, bww, ppp = None):

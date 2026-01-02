@@ -53,17 +53,25 @@ class NeuLut():
         for aa in range(outputs):
             self.outputs.append(0.)
         self.trainarr = []; self.resarr = []
+        self.skiparr = []
 
-    def memorize(self, ins, outs):
+    def memorize(self, ins, outs, stride = 1):
         ''' Memorize
               ins:       array to remember
               outs:      outputs for this input array
         '''
-        #print(ins, outs)
+        #print("ins:",  ins, "outs:", outs)
+        # Find first signal line
+        for aaa in range(len(ins)):
+            #print(ins[aaa], end = " ")
+            if ins[aaa]:
+                print("skip:", outs, aaa)
+                self.skiparr.append(aaa // stride)
+                break
         self.trainarr.append(ins)
         self.resarr.append(outs)
 
-    def recall(self, ins, stride = 1):
+    def recall(self, ins, stride = 1, skip = 0):
         ''' Recall from memory. Sum all diffs, div by count.
             input:
                     ins     array to compare to
@@ -72,6 +80,9 @@ class NeuLut():
                     the remembered sequence
         '''
 
+        #for aa in ins:
+        #    print(aa, end = " ")
+
         if VERBOSE > 1:
             print("  ins", rle(ins))
 
@@ -79,6 +90,7 @@ class NeuLut():
         idx = -1
         for aa in range(len(self.trainarr)):
             ref = self.trainarr[aa]
+
             ss = self._cmp(ins, ref, 1, stride)
             if self.deviation > ss:
                 self.deviation = ss

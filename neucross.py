@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 '''
-     Mark boundary of letters
-    Evaluate filled centers.
-
+    Mark boundary of letters
+    Evaluate centers.
 '''
 
 import sys, random, math
@@ -13,17 +12,31 @@ import matplotlib.pyplot as plt
 
 from neulib.neuutil import *
 from neulib.pgutil import *
-import neulib.neulut as newlut
+import neulib.neulut as neulut
 
 LOWPASS = 0
 
 imgdir = "png"
 
-def show(sumx, bw, pp, ppp):
+bw = load_bw_image(os.path.join(imgdir, "srect_white_abc.png"))
+
+pp0 = Image.new(bw.mode, bw.size, color=255)
+pp1 = Image.new(bw.mode, bw.size, color=255)
+pp2 = Image.new(bw.mode, bw.size, color=255)
+pp3 = Image.new(bw.mode, bw.size, color=255)
+pp4 = Image.new(bw.mode, bw.size, color=255)
+
+def show(sumx, bw):
 
     sumx.paste(bw, (10, 10))
-    sumx.paste(pp, (10, bw.size[1] + 20))
-    sumx.paste(ppp, (10, 2 * bw.size[1] + 30 ))
+    sumx.paste(pp0, (120, 10))
+
+    sumx.paste(pp1, (10, bw.size[1] + 20))
+    sumx.paste(pp2, (10, 2 * bw.size[1] + 30 ))
+
+    sumx.paste(pp3, (120, bw.size[1] + 20 ))
+    sumx.paste(pp4, (120, 2 * bw.size[1] + 30 ))
+
     #sumx.show()
     sumx2 = sumx.resize((sumx.size[0] * 3, sumx.size[1] * 3))
     sumx2.show()
@@ -46,9 +59,6 @@ def plotflags(fallx, arrx, plotx, nulval = 0, lab = ""):
 
 if __name__ == '__main__':
 
-    bw = load_bw_image(os.path.join(imgdir, "srect_white_abc.png"))
-    pp = Image.new(bw.mode, bw.size, color=255)
-    ppp = Image.new(bw.mode, bw.size, color=255)
     sumx = Image.new(bw.mode, (300, 200), color=240)
 
     arr = list(bw.getdata())
@@ -57,7 +67,7 @@ if __name__ == '__main__':
     #for cnt in range(len(arr)):
     #    aa, bb = cnt % bw.size[0], cnt // bw.size[0]
     #    pp.putpixel((aa, bb), arr[cnt])
-    #show(sumx, bw, pp, ppp)
+    #show(sumx, bw)
     #sys.exit(0)
 
     # Plot
@@ -70,33 +80,61 @@ if __name__ == '__main__':
     #plt.show()
     #sys.exit(0)
 
-    hfalls = falledges(arr, bw.size)
-    for cnt, cc in enumerate(hfalls):
+    hfall = falledges(arr, bw.size)
+    for cnt, cc in enumerate(hfall):
         if cc:
-            pp.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
-            ppp.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
-
-    hraised = raisededges(arr, bw.size)
-    for cnt, cc in enumerate(hraised):
-        if cc:
-            pp.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 180)
-            ppp.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 180)
-
-    vraised = vraisededges(arr, bw.size)
-    for cnt, cc in enumerate(vraised):
-        if cc:
-            ppp.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
+            pp1.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
+            pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
 
     vfall = vfalledges(arr, bw.size)
     for cnt, cc in enumerate(vfall):
         if cc:
-            ppp.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 180)
+            pp3.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 128)
+            pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
 
-    # Output it
-    #for cnt, cc in enumerate(crosses):
-    #    pp.putpixel(cc, 100)
-    #
+    hraised = raisededges(arr, bw.size)
+    for cnt, cc in enumerate(hraised):
+        if cc:
+            pp1.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 128)
+            pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
 
-    show(sumx, bw, pp, ppp)
+    vraised = vraisededges(arr, bw.size)
+    for cnt, cc in enumerate(vraised):
+        if cc:
+            pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
+            pp3.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
+
+    ccc3 = load_font_img("png/letter_b.png")
+    ccc2  = load_font_img("png/letter_a.png")
+    ccc = load_font_img("png/letter_c.png")
+    fl = len(list(ccc.getdata()))
+
+    #sumx.paste(ccc3, (10, 10))
+    #sumx.paste(ccc2, (10, 30))
+    #sumx.paste(ccc,  (10, 50))
+    #sumx.show()
+    #sys.exit(0)
+
+    nn = neulut.NeuLut()
+
+    # All white and all black
+    #nn.memorize([ 0 for nn in range(fl) ],  (" ",))
+    #nn.memorize([ 255 for nn in range(fl) ],  ("-",))
+
+    nn.memorize(list(ccc.getdata()),  ("b",))
+    nn.memorize(list(ccc2.getdata()), ("a",))
+    nn.memorize(list(ccc3.getdata()), ("c",))
+
+    # Cross product of the edges
+    crosses = crossfunc(hfall, vraised)
+    #crosses = crossfunc(hraised, vfall)
+    for cnt, cc in enumerate(crosses):
+        if cc:
+            xx, yy = (cnt % bw.size[0], cnt // bw.size[0])
+            pp4.putpixel((xx, yy), 0)
+            fff = nn.recall(arr[cnt:], bw.size[0])
+            print(fff, xx, yy)
+
+    show(sumx, bw)
 
 # EOF
