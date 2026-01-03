@@ -383,4 +383,22 @@ def genfonts(neu, fnamex, lettersx, sumx = None):
         #print("ddd:", len(ddd), ddd)
     return neu
 
+class CustomArrayObject:
+    def __init__(self, data_list):
+        # Use Python's built-in array module for memory management
+        self.data = array.array('B', data_list)
+        self.shape = (len(data_list),)
+        self.typestr = '|B' # '|d' for double (8-byte float)
+
+    @property
+    def __array_interface__(self):
+        # Get the pointer to the underlying C data buffer
+        data_ptr = self.data.buffer_info()[0]
+        return {
+            'shape': self.shape,
+            'typestr': self.typestr,
+            'data': (data_ptr, False), # Pointer and read-only flag (False for writeable)
+            'version': 3 # Optional: interface version
+        }
+
 # EOF

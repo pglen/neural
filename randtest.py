@@ -11,26 +11,13 @@ import neulib.neulut as neulut
 #neulut.VERBOSE = 2
 
 from Crypto import Random
+from Crypto.Cipher import AES
+from Crypto.Cipher import Salsa20
 import secrets
+import bluepy3
 
-class CustomArrayObject:
-    def __init__(self, data_list):
-        # Use Python's built-in array module for memory management
-        self.data = array.array('B', data_list)
-        self.shape = (len(data_list),)
-        self.typestr = '|B' # '|d' for double (8-byte float)
-
-    @property
-    def __array_interface__(self):
-        # Get the pointer to the underlying C data buffer
-        data_ptr = self.data.buffer_info()[0]
-        return {
-            'shape': self.shape,
-            'typestr': self.typestr,
-            'data': (data_ptr, False), # Pointer and read-only flag (False for writeable)
-            'version': 3 # Optional: interface version
-        }
-
+#print(dir(secrets))
+#sys.exit()
 
 if __name__ == '__main__':
 
@@ -39,17 +26,32 @@ if __name__ == '__main__':
     #pp2 = Image.new("L", (800,300), color=(30) )
 
     rrr = bytearray()
-    for aa in range(300):
-        for bb in range(800):
-            rrr += bytearray((secrets.randbits(8),))
     #for aa in range(300):
-    #    rrr += Random.get_random_bytes(800)
-    pp = Image.frombytes("L", (800, 300), rrr)
-
-    rrr = bytearray()
+    #    for bb in range(800):
+    #        rrr += bytearray((secrets.randbits(8),))
     for aa in range(300):
         rrr += Random.get_random_bytes(800)
-    pp2 = Image.frombytes("L", (800, 300), rrr)
+
+    #for aa in range(300):
+    #    rrr += b"a" * 800
+
+    #key = b'0123456789012345'
+    #key = b'0000000000000000'
+    key = Random.get_random_bytes(16)
+
+    cipher = AES.new(key, AES.MODE_CBC)
+    ciphertext =  cipher.encrypt(rrr)
+    pp = Image.frombytes("L", (800, 300), ciphertext)
+
+    #rrr = bytearray()
+    #for aa in range(300):
+    #    rrr += Random.get_random_bytes(800)
+    #cipher = AES.new(key, AES.MODE_CBC)
+    #cipher = Salsa20.new(key)
+    #ciphertext2 =  cipher.encrypt(rrr)
+    #ciphertext2 =  bluepy3.encrypt(rrr, "")
+    ciphertext2 =  bluepy3.encrypt(rrr, key)
+    pp2 = Image.frombytes("L", (800, 300), ciphertext2)
 
     #for aa in range(sumx.size[0]) :
     #    for bb in range(sumx.size[1]-1) :
@@ -60,7 +62,6 @@ if __name__ == '__main__':
     #        else:
     #            rrr = secrets.randbits(8)
     #            sumx.putpixel((aa, bb + 1), rrr)
-
 
     sumx.paste(pp, (0, 0))
     sumx.paste(pp2, (0, 301))
