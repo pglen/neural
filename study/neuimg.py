@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     #print("nn", nn, nn.inlen())
 
-     #arrz = newarr(ccc.size[0] * ccc.size[1], 0)
+    #arrz = newarr(ccc.size[0] * ccc.size[1], 0)
     #nn.train(arrz, ("1",), ccc.size[0])
 
     #arrf = newarr(ccc.size[0] * ccc.size[1], 255)

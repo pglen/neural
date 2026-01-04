@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.append(".")
+
 from neulib.neuutil import *
 from neulib.pgutil import *
 import neulib.neulut as neulut
@@ -8,9 +11,9 @@ def train(kindN, in_arr, out_arr, nn):
     kkk = tobits(kindN, 4)
     for aa in range(len(in_arr)):
         inarr = kkk + list(in_arr[aa])
-        nn.memorize(inarr, out_arr[aa])
+        nn.memorize(inarr, 1, out_arr[aa])
 
-def testx(kind, kindN, in_arr, out_arr, tin_arr, tout_arr, nn):
+def execone(kind, kindN, in_arr, out_arr, tin_arr, tout_arr, nn):
     #print("NeuLut %s:" % kind, kindN, kkk, nn)
     kkk = tobits(kindN, 4)
     for aa in range(len(tin_arr)):
@@ -18,7 +21,8 @@ def testx(kind, kindN, in_arr, out_arr, tin_arr, tout_arr, nn):
         nn.recall(inarr, 1)
         print("%-5s" % kind, "in:", tin_arr[aa], "out:", nn.outputs,  end = " ")
         print("expect:", tout_arr[aa], end = " ")
-        print(print_is_ok(nn.outputs,  tout_arr[aa]), "st:", nn.strength)
+        print(print_is_ok(nn.outputs,  tout_arr[aa]), "st:", nn.deviation)
+        assert nn.outputs == tout_arr[aa]
 
 def tobits(val, lenx):
     ''' Convert number to digital bits '''
@@ -34,9 +38,11 @@ in_arr  =  ( (0, 0), (VAL, 0),  (0, VAL),  (VAL, VAL) )
 tin_arr =  ( (0, 0), (VAL2, 0), (0, VAL2), (VAL2, VAL2) )
 XOR, OR, AND, NAND, NOR = range(5)
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
 
-    nn = neulut.NeuLut()
+nn = neulut.NeuLut()
+
+def trainall():
 
     # AND gate
     out_aarr =  (0, 0, 0, OUT)
@@ -64,10 +70,14 @@ if __name__ == '__main__':
     train(NOR, in_arr, out_norr, nn)
 
     #print("Cummulative test:")
-    testx("OR:", OR,  in_arr, out_oarr, tin_arr, tout_oarr, nn)
-    testx("AND:", AND, in_arr, out_aarr, tin_arr, tout_aarr, nn)
-    testx("XOR:", XOR, in_arr, out_xoarr, tin_arr, tout_xoarr, nn)
-    testx("NAND:", NAND,in_arr, out_narr, tin_arr, tout_narr, nn)
-    testx("NOR:",  NOR, in_arr, out_norr, tin_arr, tout_norr, nn)
+    execone("OR:", OR,  in_arr, out_oarr, tin_arr, tout_oarr, nn)
+    execone("AND:", AND, in_arr, out_aarr, tin_arr, tout_aarr, nn)
+    execone("XOR:", XOR, in_arr, out_xoarr, tin_arr, tout_xoarr, nn)
+    execone("NAND:", NAND,in_arr, out_narr, tin_arr, tout_narr, nn)
+    execone("NOR:",  NOR, in_arr, out_norr, tin_arr, tout_norr, nn)
+
+def test_neulut():
+
+    trainall()
 
 # EOF

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-# ------------------------------------------------------------------------
-# Neural network load font
+''' Neural network load font '''
 
 import sys, random, math
 
@@ -17,10 +16,10 @@ import neulib.neulut as neulut
 
 space = list(" ")
 #letters =  [ chr(nn) for nn in range(32) ]  + space
-#letters += [ chr(nn) for nn in range(32, 64) ] + space
+letters = [ chr(nn) for nn in range(ord('a'), ord('z')+1) ] + space
 #letters += [ chr(nn) for nn in range(64, 96) ] + space
 #letters += [ chr(nn) for nn in range(96, 128) ] + space
-letters = [ chr(nn) for nn in range(128) ]
+#letters = [ chr(nn) for nn in range(128) ]
 #letters = ['a', 'b', ' ']
 #print(letters)
 

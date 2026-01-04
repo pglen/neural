@@ -60,8 +60,12 @@ def plotflags(fallx, arrx, plotx, nulval = 0, lab = ""):
 if __name__ == '__main__':
 
     sumx = Image.new(bw.mode, (300, 200), color=240)
-
     arr = list(bw.getdata())
+
+    fname = "/usr/share/fonts/truetype/freefont/FreeMono.ttf"
+    neu =  neulut.NeuLut()
+    letters = [ chr(nn) for nn in range(ord('a'), ord('z')+1) ]
+    neu = genfonts(neu, fname, letters) #, sumx)
 
     # Verify
     #for cnt in range(len(arr)):
@@ -80,22 +84,16 @@ if __name__ == '__main__':
     #plt.show()
     #sys.exit(0)
 
-    hfall = falledges(arr, bw.size)
-    for cnt, cc in enumerate(hfall):
-        if cc:
-            pp1.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
-            pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
-
-    vfall = vfalledges(arr, bw.size)
-    for cnt, cc in enumerate(vfall):
-        if cc:
-            pp3.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 128)
-            pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
-
     hraised = raisededges(arr, bw.size)
     for cnt, cc in enumerate(hraised):
         if cc:
             pp1.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 128)
+            pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
+
+    hfall = falledges(arr, bw.size)
+    for cnt, cc in enumerate(hfall):
+        if cc:
+            pp1.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
             pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
 
     vraised = vraisededges(arr, bw.size)
@@ -104,10 +102,16 @@ if __name__ == '__main__':
             pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
             pp3.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
 
-    ccc3 = load_font_img("png/letter_b.png")
-    ccc2  = load_font_img("png/letter_a.png")
-    ccc = load_font_img("png/letter_c.png")
-    fl = len(list(ccc.getdata()))
+    vfall = vfalledges(arr, bw.size)
+    for cnt, cc in enumerate(vfall):
+        if cc:
+            pp3.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 128)
+            pp2.putpixel((cnt % bw.size[0], cnt // bw.size[0]), 0)
+
+    #ccc3  = load_font_img("png/letter_a.png")
+    #ccc2 = load_font_img("png/letter_b.png")
+    #ccc = load_font_img("png/letter_c.png")
+    #fl = len(list(ccc.getdata()))
 
     #sumx.paste(ccc3, (10, 10))
     #sumx.paste(ccc2, (10, 30))
@@ -115,24 +119,34 @@ if __name__ == '__main__':
     #sumx.show()
     #sys.exit(0)
 
-    nn = neulut.NeuLut()
-
-    # All white and all black
+    #nn = neulut.NeuLut()
+    #
+    ## All white and all black
     #nn.memorize([ 0 for nn in range(fl) ],  (" ",))
-    #nn.memorize([ 255 for nn in range(fl) ],  ("-",))
-
-    nn.memorize(list(ccc.getdata()),  ("b",))
-    nn.memorize(list(ccc2.getdata()), ("a",))
-    nn.memorize(list(ccc3.getdata()), ("c",))
+    ##nn.memorize([ 255 for nn in range(fl) ],  ("-",))
+    #
+    #nn.memorize(list(ccc.getdata()),  ("c",))
+    #nn.memorize(list(ccc2.getdata()), ("b",))
+    #nn.memorize(list(ccc3.getdata()), ("a",))
 
     # Cross product of the edges
-    crosses = crossfunc(hfall, vraised)
-    #crosses = crossfunc(hraised, vfall)
+    #crosses = crossfunc(hfall, vfall)
+    crosses = crossfunc(hraised, vraised)
     for cnt, cc in enumerate(crosses):
         if cc:
             xx, yy = (cnt % bw.size[0], cnt // bw.size[0])
             pp4.putpixel((xx, yy), 0)
-            fff = nn.recall(arr[cnt:], bw.size[0])
+            arr2 = arr[cnt:]:
+            yyy = 0 ; xxx = 0
+
+            for aa in range(100):
+                arr[cnt:]:
+                pp4.putpixel((xxx, yyy), 0)
+                xxx += 1
+                if xxx > yyy
+
+
+            fff = neu.recall(arr[cnt:], bw.size[0])
             print(fff, xx, yy)
 
     show(sumx, bw)

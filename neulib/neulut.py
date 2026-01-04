@@ -55,19 +55,20 @@ class NeuLut():
         self.trainarr = []; self.resarr = []
         self.skiparr = []
 
-    def memorize(self, ins, outs, stride = 1):
+    def memorize(self, ins, linelen, outs):
         ''' Memorize
               ins:       array to remember
               outs:      outputs for this input array
         '''
         #print("ins:",  ins, "outs:", outs)
         # Find first signal line
-        for aaa in range(len(ins)):
-            #print(ins[aaa], end = " ")
-            if ins[aaa]:
-                print("skip:", outs, aaa)
-                self.skiparr.append(aaa // stride)
-                break
+        #for aaa in range(len(ins)):
+        #    #print(ins[aaa], end = " ")
+        #    if ins[aaa]:
+        #        print("skip:", outs, aaa)
+        #        self.skiparr.append(aaa // stride)
+        #        break
+        self.linelen = linelen
         self.trainarr.append(ins)
         self.resarr.append(outs)
 

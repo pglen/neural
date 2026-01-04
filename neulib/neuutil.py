@@ -160,9 +160,9 @@ def raisededges(arrx, size):
 
     lenx = len(arrx) ; prev = 255
     eee = [0 for _ in range(lenx) ]
-    for ddd in range(lenx):
-        if prev < arrx[ddd]:
-            eee[ddd] = True
+    for ddd in range(1, lenx):
+        if prev > arrx[ddd]:
+            eee[ddd-1] = True
         prev = arrx[ddd]
     return eee
 
@@ -172,9 +172,9 @@ def falledges(arrx, size):
 
     lenx = len(arrx) ; prev = 255
     eee = [0 for _ in range(lenx) ]
-    for ddd in range(lenx):
-        if prev > arrx[ddd]:
-            eee[ddd] = True
+    for ddd in range(1, lenx):
+        if prev < arrx[ddd]:
+            eee[ddd-1] = True
         prev = arrx[ddd]
     return eee
 
@@ -189,7 +189,7 @@ def vraisededges(arrx, size):
         for bb in range(size[1]):
             ddd = aa + size[0] * bb
             if prev > arrx[ddd]:
-                eee[ddd] = True
+                eee[ddd-1] = True
             prev = arrx[ddd]
     return eee
 
@@ -204,7 +204,7 @@ def vfalledges(arrx, size):
         for bb in range(size[1]):
             ddd = aa + size[0] * bb
             if prev < arrx[ddd]:
-                eee[ddd] = True
+                eee[ddd-1] = True
             prev = arrx[ddd]
     return eee
 

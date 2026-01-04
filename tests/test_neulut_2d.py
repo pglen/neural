@@ -19,8 +19,8 @@ in_arr0 = ( \
          0, 0, 0, 0, 0, 0, 0, 0,
          )
 in_arr1 = ( \
-         0, 0, 0, 0, 1, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 1, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
@@ -42,10 +42,10 @@ in_arr3 = ( \
          0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, 0,
-         0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 1, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0,
          0, 0, 0, 0, 0, 0, 0, 0,
          )
 in_tarr0 = ( \
@@ -66,14 +66,16 @@ out_arr3 = [1, 1]
 # ------------------------------------------------------------------------
 # Tests
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
+
+def test_2d():
 
     ttt = time.time()
     nn = neulut.NeuLut(64, 2)
-    nn.memorize(in_arr0, out_arr0)
-    nn.memorize(in_arr1, out_arr1)
-    nn.memorize(in_arr2, out_arr2)
-    nn.memorize(in_arr3, out_arr3)
+    nn.memorize(in_arr0, 8, out_arr0)
+    nn.memorize(in_arr1, 8, out_arr1)
+    nn.memorize(in_arr2, 8, out_arr2)
+    nn.memorize(in_arr3, 8, out_arr3)
 
     aa = nn.recall(in_arr0, 1) ; aaa = nn.deviation
     bb = nn.recall(in_arr1, 1) ; bbb = nn.deviation
@@ -86,8 +88,8 @@ if __name__ == '__main__':
     print(bbb, bb)
     print(ccc, cc)
     print(ddd, dd)
-    print("tr:", eee, ee)  # Will match arr2
+    print("tr:", eee, ee)  # Will match arr2 as configured
 
-    #testx("OR:", OR,  in_arr, out_oarr, tin_arr, tout_oarr, nn)
+    assert ee == out_arr2
 
 # EOF
